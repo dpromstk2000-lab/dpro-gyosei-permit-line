@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>DPRO行政書士事務所｜スタッフiPad</title>
+  <!-- STEP GYOSEI-8-R1 appointment type Japanese label fix 20260717 -->
   <script src="config.js"></script>
   <style>
     :root{
@@ -384,7 +385,7 @@
     preparing:"申請準備中",ready_to_submit:"提出準備完了",under_review:"審査中",correction_required:"補正対応",approved:"許可・完了",rejected:"不許可",withdrawn:"取下げ",
     open:"進行中",on_hold:"保留",expired:"期限経過",future:"将来更新",notice_due:"案内時期",notified:"更新案内済み",renewal_in_progress:"更新手続き中",renewed:"更新完了",not_required:"更新対象外",
     low:"低",normal:"通常",high:"高",urgent:"緊急",in_progress:"対応中",
-    in_person:"来所",phone:"電話",online:"オンライン",pending:"承認待ち",revoked:"連携解除",unlinked:"未連携"
+    in_person:"来所",visit:"来所",office:"来所",phone:"電話",online:"オンライン",web:"オンライン",video:"オンライン",pending:"承認待ち",revoked:"連携解除",unlinked:"未連携"
   }[v]||DPRO_GYOSEI.statusLabel(v)||v||"－");
   const tone=v=>{
     if(["completed","confirmed","accepted","complete","approved","renewed"].includes(v))return"ok";
