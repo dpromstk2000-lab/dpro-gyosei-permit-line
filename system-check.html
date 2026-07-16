@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#17324D">
   <meta name="robots" content="noindex,nofollow">
   <title>DPRO行政書士｜営業前システムチェック</title>
+  <!-- STEP GYOSEI-9-R1 environment production_guard display fix 20260717 -->
   <script src="config.js"></script>
   <style>
     :root{
@@ -602,8 +603,8 @@
       ["事務所コード",o.office_code||c.OFFICE_CODE||"－"],
       ["タイムゾーン",o.timezone||c.TIMEZONE||"－"],
       ["予約枠",`${o.default_slot_minutes||c.DEFAULT_SLOT_MINUTES||"－"}分`],
-      ["デモ環境",String(o.is_demo??c.IS_DEMO??"－")],
-      ["本番保護",String(o.production_guard??s.production_guard??"－")]
+      ["デモ環境",String(State.office?.is_demo??db.office?.is_demo??c.IS_DEMO??"－")],
+      ["本番保護",String(State.office?.production_guard??db.office?.production_guard??s.production_guard??"－")]
     ];
     $("#environmentInfo").innerHTML=rows.map(r=>`<div class="info-box"><span>${esc(r[0])}</span><strong>${esc(r[1])}</strong></div>`).join("");
   }
