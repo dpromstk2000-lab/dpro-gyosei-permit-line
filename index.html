@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17324D">
+  <title>DPRO行政書士事務所｜相談受付</title>
+  <style>
+    :root{--navy:#17324d;--teal:#247b78;--bg:#f7f8f5;--card:#fff;--text:#17212b;--muted:#617180;--line:#d9e1e5;--ok:#2f855a;--warn:#c26a12;--danger:#b42318;--shadow:0 10px 30px rgba(23,50,77,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;font-size:17px;line-height:1.65}
+    button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}a{color:var(--teal)}
+    .hero{background:linear-gradient(135deg,#132d46,#1c4b5a 72%,#247b78);color:#fff;padding:26px 18px 42px}.hero-inner,.wrap{max-width:920px;margin:auto}.brand{display:flex;gap:13px;align-items:center}.seal{width:52px;height:52px;border-radius:15px;background:#fff;color:var(--navy);display:grid;place-items:center;font-size:25px;font-weight:900;box-shadow:0 8px 20px #0003}.brand small{display:block;color:#d7ecea;font-size:14px}.brand strong{font-size:20px}.hero h1{font-size:clamp(27px,6vw,42px);line-height:1.3;margin:30px 0 12px;letter-spacing:.02em}.hero p{margin:0;color:#eaf5f3;font-size:17px;max-width:720px}.hero-points{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.hero-points span{background:#ffffff1c;border:1px solid #ffffff38;border-radius:999px;padding:7px 12px;font-size:14px;font-weight:700}
+    .wrap{padding:0 16px 70px}.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-top:-21px;overflow:hidden}.progress{display:grid;grid-template-columns:repeat(5,1fr);background:#f1f5f4;border-bottom:1px solid var(--line)}.progress div{position:relative;text-align:center;padding:13px 4px;font-size:13px;font-weight:800;color:#7b8993}.progress div.active{background:#e8f4f2;color:var(--teal)}.progress div.done{color:var(--ok)}.step{display:none;padding:24px}.step.active{display:block}.step h2{font-size:24px;line-height:1.4;margin:0 0 5px;color:var(--navy)}.lead{color:var(--muted);margin:0 0 22px}.required{color:var(--danger);font-weight:800;font-size:14px}.optional{color:var(--muted);font-size:14px}
+    .category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.category{min-height:115px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:16px;padding:15px;transition:.15s}.category:hover{border-color:#8ebbb8}.category.selected{border-color:var(--teal);background:#eff8f6;box-shadow:0 0 0 3px #247b7820}.category strong{display:block;color:var(--navy);font-size:18px;margin-bottom:3px}.category span{display:block;color:var(--muted);font-size:14px;line-height:1.5}.category .mark{float:right;color:var(--teal);font-weight:900;opacity:0}.category.selected .mark{opacity:1}
+    .field{margin-bottom:19px}.field label,.legend{display:block;font-weight:800;margin-bottom:7px;color:#243746}.input,select,textarea{width:100%;min-height:52px;border:1.5px solid #bfcbd1;border-radius:12px;background:#fff;padding:11px 13px;outline:none}.input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 4px #247b7818}textarea{min-height:130px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.choice-row{display:flex;flex-wrap:wrap;gap:10px}.choice{position:relative;flex:1;min-width:145px}.choice input{position:absolute;opacity:0}.choice label{display:flex;align-items:center;justify-content:center;min-height:52px;border:1.5px solid #bfcbd1;border-radius:12px;background:#fff;padding:10px;text-align:center;font-weight:750}.choice input:checked+label{border-color:var(--teal);background:#eaf6f4;color:#145d59;box-shadow:0 0 0 3px #247b7818}.note{background:#f2f6f7;border-left:5px solid var(--teal);border-radius:10px;padding:13px 15px;color:#405460;font-size:15px;margin:15px 0}.privacy{background:#fff8ec;border:1px solid #f0d3a8;border-radius:12px;padding:13px 15px;color:#6e4b1d;font-size:15px}
+    .member-found{display:none;background:#eaf6ee;border:1px solid #aad1b6;border-radius:14px;padding:14px;margin-bottom:18px;color:#245d37}.member-found.show{display:block}.corp{display:none;border:1px dashed #8fafb0;border-radius:14px;padding:16px;margin-bottom:18px;background:#f8fbfa}.corp.show{display:block}
+    .calendar-area{display:none}.calendar-area.show{display:block}.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}.slot{border:1.5px solid #aabcc4;background:#fff;border-radius:11px;padding:10px 5px;min-height:50px;font-weight:750}.slot:hover{border-color:var(--teal)}.slot.selected{background:var(--teal);color:#fff;border-color:var(--teal)}.slot:disabled{background:#eef1f2;color:#97a1a8;cursor:not-allowed}.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:22px;background:#f5f7f7;border-radius:12px}.slot-detail{display:none;margin-top:15px;padding:14px;border:1px solid #b5d5d2;background:#eff8f6;border-radius:12px}.slot-detail.show{display:block}
+    .review{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:15px}.review h3{margin:0;background:#eef4f3;padding:11px 14px;font-size:17px;color:var(--navy)}.review dl{margin:0;padding:4px 14px}.review-row{display:grid;grid-template-columns:155px 1fr;gap:10px;border-bottom:1px solid #edf0f1;padding:10px 0}.review-row:last-child{border:0}.review dt{font-weight:750;color:var(--muted)}.review dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+    .actions{display:flex;gap:10px;justify-content:space-between;margin-top:25px}.btn{border:0;border-radius:13px;min-height:54px;padding:12px 20px;font-weight:850}.btn-primary{background:var(--teal);color:#fff;min-width:180px;box-shadow:0 7px 16px #247b7830}.btn-primary:hover{background:#1c6966}.btn-primary:disabled{opacity:.55;cursor:not-allowed}.btn-back{background:#eef1f2;color:#485965}.btn-ghost{background:#fff;border:1.5px solid #aab8c0;color:var(--navy)}
+    .loading{display:none;position:fixed;inset:0;background:#10253699;z-index:50;align-items:center;justify-content:center;padding:20px}.loading.show{display:flex}.loading-card{background:#fff;border-radius:18px;padding:25px;min-width:230px;text-align:center;box-shadow:0 15px 50px #0004}.spinner{width:42px;height:42px;border:5px solid #dfe9e7;border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}@keyframes spin{to{transform:rotate(360deg)}}
+    .toast{display:none;position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;max-width:90%;background:#263844;color:#fff;border-radius:12px;padding:12px 18px;box-shadow:0 10px 30px #0004}.toast.show{display:block}.toast.error{background:var(--danger)}
+    .complete{text-align:center;padding:33px 20px}.complete-icon{width:76px;height:76px;margin:auto;background:#e3f4e8;color:var(--ok);border-radius:50%;display:grid;place-items:center;font-size:38px;font-weight:900}.complete h2{font-size:27px;color:var(--navy);margin:17px 0 7px}.receipt{max-width:520px;margin:20px auto;background:#f3f7f6;border-radius:15px;padding:15px;text-align:left}.receipt strong{display:block;color:var(--muted);font-size:14px}.receipt b{font-size:21px;color:var(--navy)}
+    footer{text-align:center;color:var(--muted);font-size:14px;padding:25px 12px}
+    @media(max-width:640px){body{font-size:17px}.hero{padding-top:20px}.hero h1{margin-top:25px}.progress div{font-size:11px;padding:11px 2px}.progress div span{display:none}.step{padding:20px 16px}.category-grid{grid-template-columns:1fr}.category{min-height:auto}.two{grid-template-columns:1fr;gap:0}.slots{grid-template-columns:repeat(2,1fr)}.review-row{grid-template-columns:1fr;gap:1px}.review dt{font-size:14px}.actions{position:sticky;bottom:0;background:#fff;padding:10px 0 2px;z-index:3}.btn{padding:11px 14px}.btn-primary{min-width:150px}.seal{width:47px;height:47px}.brand strong{font-size:18px}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand"><div class="seal">行</div><div><small>DPRO 行政書士・許認可申請 LINE</small><strong id="officeName">DPRO行政書士事務所</strong></div></div>
+      <h1>許認可・行政手続きの<br>ご相談はこちらから</h1>
+      <p>相談内容を事前にお知らせいただくことで、必要書類や今後の流れをスムーズにご案内できます。</p>
+      <div class="hero-points"><span>24時間受付</span><span>相談内容を整理</span><span>面談予約も可能</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel" id="wizard">
+      <div class="progress" id="progress">
+        <div class="active">1<span>. 相談分野</span></div><div>2<span>. お客様情報</span></div><div>3<span>. 相談内容</span></div><div>4<span>. 面談予約</span></div><div>5<span>. 確認</span></div>
+      </div>
+
+      <form id="consultForm" novalidate>
+        <section class="step active" data-step="1">
+          <h2>ご相談の分野を選択</h2><p class="lead">最も近い項目を1つ選んでください。</p>
+          <div id="categoryGrid" class="category-grid"><div class="empty">相談分野を読み込んでいます…</div></div>
+          <div class="actions"><span></span><button class="btn btn-primary" type="button" data-next>次へ進む</button></div>
+        </section>
+
+        <section class="step" data-step="2">
+          <h2>お客様情報</h2><p class="lead">初めての方は、連絡先をご入力ください。</p>
+          <div class="member-found" id="memberFound"><strong>登録済み情報を取得しました</strong><br>入力の手間を省くため、LINEに登録された情報を表示しています。</div>
+          <fieldset class="field" style="border:0;padding:0"><legend class="legend">ご相談者 <span class="required">必須</span></legend><div class="choice-row"><div class="choice"><input id="typeIndividual" type="radio" name="customer_type" value="individual" checked><label for="typeIndividual">個人のお客様</label></div><div class="choice"><input id="typeCorporate" type="radio" name="customer_type" value="corporate"><label for="typeCorporate">法人のお客様</label></div></div></fieldset>
+          <div class="two"><div class="field"><label for="fullName">お名前 <span class="required">必須</span></label><input class="input" id="fullName" name="full_name" autocomplete="name" maxlength="100" placeholder="例：山田 一郎" required></div><div class="field"><label for="fullNameKana">フリガナ <span class="optional">任意</span></label><input class="input" id="fullNameKana" name="full_name_kana" maxlength="100" placeholder="例：ヤマダ イチロウ"></div></div>
+          <div class="two"><div class="field"><label for="phone">電話番号 <span class="required">必須</span></label><input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="例：090-1234-5678" required></div><div class="field"><label for="email">メールアドレス <span class="optional">任意</span></label><input class="input" id="email" name="email" type="email" autocomplete="email" maxlength="200" placeholder="例：info@example.jp"></div></div>
+          <div class="corp" id="corpFields"><h3 style="margin-top:0;color:var(--navy)">法人情報</h3><div class="two"><div class="field"><label for="corporationName">法人名 <span class="required">必須</span></label><input class="input" id="corporationName" name="corporation_name" maxlength="200" placeholder="例：株式会社〇〇"></div><div class="field"><label for="representativeName">代表者名 <span class="optional">任意</span></label><input class="input" id="representativeName" name="representative_name" maxlength="100"></div></div><div class="two"><div class="field"><label for="department">部署名 <span class="optional">任意</span></label><input class="input" id="department" name="department" maxlength="100"></div><div class="field"><label for="positionTitle">役職 <span class="optional">任意</span></label><input class="input" id="positionTitle" name="position_title" maxlength="100"></div></div></div>
+          <div class="note">電話番号は、ハイフン・空白・全角・+81形式でも同じ番号として確認されます。</div>
+          <div class="actions"><button class="btn btn-back" type="button" data-back>戻る</button><button class="btn btn-primary" type="button" data-next>次へ進む</button></div>
+        </section>
+
+        <section class="step" data-step="3">
+          <h2>ご相談内容</h2><p class="lead">分かる範囲で構いません。現在の状況をお知らせください。</p>
+          <div class="field"><label for="subject">ご相談の件名 <span class="required">必須</span></label><input class="input" id="subject" name="subject" maxlength="200" placeholder="例：建設業許可の更新について" required></div>
+          <div class="field"><label for="summary">現在の状況・お困りごと <span class="required">必須</span></label><textarea id="summary" name="summary" maxlength="3000" placeholder="例：現在の許可期限、希望する手続き、いつ頃までに必要かなどをご記入ください。" required></textarea></div>
+          <div id="dynamicQuestions"></div>
+          <div class="field"><label for="preferredContactAt">連絡を希望する時間帯 <span class="optional">任意</span></label><select id="preferredContactAt" name="preferred_contact_time"><option value="">指定なし</option><option>午前中</option><option>12時～15時</option><option>15時～18時</option><option>18時以降</option></select></div>
+          <div class="privacy"><strong>高機密情報は入力しないでください</strong><br>マイナンバー、在留カード番号、パスポート番号、口座情報などは、この相談フォームへ入力しないでください。</div>
+          <div class="actions"><button class="btn btn-back" type="button" data-back>戻る</button><button class="btn btn-primary" type="button" data-next>次へ進む</button></div>
+        </section>
+
+        <section class="step" data-step="4">
+          <h2>面談予約</h2><p class="lead">相談受付だけでも送信できます。日時を決めたい方は「予約する」を選択してください。</p>
+          <fieldset class="field" style="border:0;padding:0"><legend class="legend">面談予約</legend><div class="choice-row"><div class="choice"><input id="bookingNo" type="radio" name="booking_choice" value="no" checked><label for="bookingNo">今回は予約しない</label></div><div class="choice"><input id="bookingYes" type="radio" name="booking_choice" value="yes"><label for="bookingYes">面談を予約する</label></div></div></fieldset>
+          <div class="calendar-area" id="calendarArea">
+            <fieldset class="field" style="border:0;padding:0"><legend class="legend">面談方法</legend><div class="choice-row"><div class="choice"><input id="visit" type="radio" name="appointment_type" value="visit" checked><label for="visit">事務所へ来所</label></div><div class="choice"><input id="phoneMeeting" type="radio" name="appointment_type" value="phone"><label for="phoneMeeting">電話相談</label></div><div class="choice"><input id="online" type="radio" name="appointment_type" value="online"><label for="online">オンライン</label></div></div></fieldset>
+            <div class="field"><label for="appointmentDate">希望日</label><input class="input" id="appointmentDate" type="date"></div>
+            <div class="field"><span class="legend">空き時間</span><div class="slots" id="slots"><div class="empty">希望日を選択してください。</div></div></div>
+            <div class="slot-detail" id="slotDetail"></div>
+          </div>
+          <div class="actions"><button class="btn btn-back" type="button" data-back>戻る</button><button class="btn btn-primary" type="button" data-next>入力内容を確認</button></div>
+        </section>
+
+        <section class="step" data-step="5">
+          <h2>入力内容の確認</h2><p class="lead">内容をご確認のうえ、送信してください。</p>
+          <div id="reviewArea"></div>
+          <label style="display:flex;gap:10px;align-items:flex-start;margin:18px 0"><input id="agree" type="checkbox" style="width:23px;height:23px;margin-top:3px"><span>個人情報の取扱いに同意し、相談内容を送信します。<span class="required">必須</span></span></label>
+          <div class="actions"><button class="btn btn-back" type="button" data-back>修正する</button><button class="btn btn-primary" id="submitButton" type="submit">この内容で送信</button></div>
+        </section>
+      </form>
+
+      <section class="complete" id="complete" hidden>
+        <div class="complete-icon">✓</div><h2>ご相談を受け付けました</h2><p>内容を確認後、事務所よりご連絡いたします。</p>
+        <div class="receipt"><strong>受付番号</strong><b id="receiptCode">－</b><div id="appointmentReceipt" style="margin-top:10px"></div></div>
+        <p class="note" style="text-align:left">受付番号はお問い合わせの際に必要です。この画面を保存してください。</p>
+        <button class="btn btn-ghost" type="button" onclick="location.reload()">新しい相談を入力</button>
+      </section>
+    </section>
+    <footer><strong>DPRO行政書士事務所</strong><br>この画面だけで許可の可否を判断するものではありません。</footer>
+  </main>
+
+  <div class="loading" id="loading"><div class="loading-card"><div class="spinner"></div><strong id="loadingText">読み込んでいます…</strong></div></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script>
+    "use strict";
+    const App={step:1,categories:[],selectedCategory:null,selectedSlot:null,lineUserId:"",member:null};
+    const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+    const categoryQuestions={
+      construction:[{label:"現在の許可の有無",type:"select",options:["許可あり","許可なし","分からない"]},{label:"希望する建設業種",type:"text",placeholder:"例：建築一式、内装仕上工事"},{label:"許可・更新を希望する時期",type:"date"}],
+      industrial_waste:[{label:"希望する都道府県",type:"text",placeholder:"例：福岡県、佐賀県"},{label:"新規・更新・変更の区分",type:"select",options:["新規","更新","変更","分からない"]}],
+      business_license:[{label:"営業の種類",type:"text",placeholder:"例：飲食店、深夜酒類提供"},{label:"営業予定地",type:"text",placeholder:"市区町村までで構いません"},{label:"開業予定日",type:"date"}],
+      antique:[{label:"申請者区分",type:"select",options:["個人","法人","未定"]},{label:"主に扱う品目",type:"text",placeholder:"例：衣類、時計、自動車"}],
+      vehicle:[{label:"希望する手続き",type:"select",options:["車庫証明","名義変更","住所変更","抹消登録","その他"]},{label:"対象台数",type:"number",placeholder:"1"}],
+      corporation:[{label:"設立予定の法人種別",type:"select",options:["株式会社","合同会社","一般社団法人","その他","未定"]},{label:"設立希望時期",type:"date"}],
+      inheritance:[{label:"希望する手続き",type:"select",options:["相続関係説明図","遺産分割協議書","遺言書作成相談","その他","分からない"]},{label:"お亡くなりになった時期",type:"text",placeholder:"例：2026年6月頃"}],
+      immigration:[{label:"希望する手続き",type:"select",options:["在留資格認定","在留期間更新","在留資格変更","永住","帰化相談","その他"]},{label:"現在の在留資格",type:"text",placeholder:"番号は入力しないでください"}],
+      subsidy:[{label:"検討している制度",type:"text",placeholder:"分かる場合のみ"},{label:"申請希望時期",type:"date"}],
+      other:[{label:"手続きの種類",type:"text",placeholder:"分かる範囲でご記入ください"}]
+    };
+
+    document.addEventListener("DOMContentLoaded",init);
+    async function init(){
+      $("#appointmentDate").min=DPRO_GYOSEI.todayJst();
+      bind(); showLoading(true,"事務所情報を読み込んでいます…");
+      try{
+        const [office,cats]=await Promise.all([DPRO_GYOSEI.apiFetch("/api/public/office"),DPRO_GYOSEI.apiFetch("/api/public/categories")]);
+        $("#officeName").textContent=office.office.office_name; App.categories=cats.categories||[]; renderCategories();
+        App.lineUserId=DPRO_GYOSEI.getLineUserId(); if(App.lineUserId) await loadMember();
+      }catch(e){toast(e.message||"読み込みに失敗しました。",true);$("#categoryGrid").innerHTML='<div class="empty">読み込めませんでした。画面を再読み込みしてください。</div>'}finally{showLoading(false)}
+    }
+    function bind(){
+      $$('[data-next]').forEach(b=>b.addEventListener('click',next)); $$('[data-back]').forEach(b=>b.addEventListener('click',()=>go(App.step-1)));
+      $$('input[name="customer_type"]').forEach(x=>x.addEventListener('change',toggleCorp));
+      $$('input[name="booking_choice"]').forEach(x=>x.addEventListener('change',toggleBooking));
+      $("#appointmentDate").addEventListener('change',loadSlots); $("#consultForm").addEventListener('submit',submit);
+    }
+    async function loadMember(){
+      try{const d=await DPRO_GYOSEI.apiFetch('/api/member/profile',{lineUserId:App.lineUserId});App.member=d.profile;$("#fullName").value=d.profile.full_name||'';$("#fullNameKana").value=d.profile.full_name_kana||'';$("#phone").value=d.profile.phone||'';$("#email").value=d.profile.email||'';$("#memberFound").classList.add('show')}catch(e){if(e.status!==404&&e.status!==403)console.warn(e)}
+    }
+    function renderCategories(){
+      $("#categoryGrid").innerHTML=App.categories.map(c=>`<button class="category" type="button" data-id="${DPRO_GYOSEI.escapeHtml(c.id)}"><span class="mark">✓</span><strong>${DPRO_GYOSEI.escapeHtml(c.category_name)}</strong><span>${DPRO_GYOSEI.escapeHtml(c.description||'')}</span></button>`).join('');
+      $$('.category').forEach(b=>b.addEventListener('click',()=>{App.selectedCategory=App.categories.find(c=>c.id===b.dataset.id);$$('.category').forEach(x=>x.classList.toggle('selected',x===b));renderQuestions();}));
+    }
+    function renderQuestions(){
+      const list=categoryQuestions[App.selectedCategory?.category_code]||categoryQuestions.other;
+      $("#dynamicQuestions").innerHTML=list.map((q,i)=>{const id='dq'+i;let input='';if(q.type==='select')input=`<select id="${id}" data-question="${DPRO_GYOSEI.escapeHtml(q.label)}"><option value="">選択してください</option>${q.options.map(o=>`<option>${DPRO_GYOSEI.escapeHtml(o)}</option>`).join('')}</select>`;else input=`<input class="input" id="${id}" type="${q.type}" data-question="${DPRO_GYOSEI.escapeHtml(q.label)}" placeholder="${DPRO_GYOSEI.escapeHtml(q.placeholder||'')}">`;return `<div class="field"><label for="${id}">${DPRO_GYOSEI.escapeHtml(q.label)} <span class="optional">任意</span></label>${input}</div>`}).join('');
+      if(!$("#subject").value)$("#subject").value=App.selectedCategory.category_name+'の相談';
+    }
+    function toggleCorp(){const isCorp=$("#typeCorporate").checked;$("#corpFields").classList.toggle('show',isCorp);$("#corporationName").required=isCorp}
+    function toggleBooking(){const yes=$("#bookingYes").checked;$("#calendarArea").classList.toggle('show',yes);if(!yes){App.selectedSlot=null;renderSlotDetail()}}
+    function next(){
+      if(!validateStep(App.step))return;
+      if(App.step===4)renderReview();go(App.step+1);
+    }
+    function validateStep(step){
+      if(step===1&&!App.selectedCategory){toast('相談分野を選択してください。',true);return false}
+      if(step===2){if(!$("#fullName").value.trim()){focusError('#fullName','お名前を入力してください。');return false}if(!DPRO_GYOSEI.normalizePhone($("#phone").value)){focusError('#phone','電話番号を入力してください。');return false}if($("#typeCorporate").checked&&!$("#corporationName").value.trim()){focusError('#corporationName','法人名を入力してください。');return false}}
+      if(step===3){if(!$("#subject").value.trim()){focusError('#subject','件名を入力してください。');return false}if(!$("#summary").value.trim()){focusError('#summary','相談内容を入力してください。');return false}}
+      if(step===4&&$("#bookingYes").checked&&!App.selectedSlot){toast('面談の希望日時を選択してください。',true);return false}
+      return true;
+    }
+    function focusError(sel,msg){toast(msg,true);$(sel).focus()}
+    function go(step){App.step=Math.max(1,Math.min(5,step));$$('.step').forEach(s=>s.classList.toggle('active',Number(s.dataset.step)===App.step));$$('#progress div').forEach((p,i)=>{p.classList.toggle('active',i+1===App.step);p.classList.toggle('done',i+1<App.step)});window.scrollTo({top:document.querySelector('.panel').offsetTop-12,behavior:'smooth'})}
+    async function loadSlots(){
+      const date=$("#appointmentDate").value;App.selectedSlot=null;renderSlotDetail();if(!date)return;
+      $("#slots").innerHTML='<div class="empty">空き時間を確認しています…</div>';
+      try{const d=await DPRO_GYOSEI.apiFetch('/api/public/availability',{params:{date}});if(!d.slots?.length){$("#slots").innerHTML='<div class="empty">この日は予約できる時間がありません。別の日を選択してください。</div>';return}$("#slots").innerHTML=d.slots.map(s=>`<button class="slot" type="button" data-time="${s.time}">${s.time}<br><small>${s.staff.length}枠</small></button>`).join('');$$('.slot').forEach(b=>b.addEventListener('click',()=>selectSlot(d.slots.find(s=>s.time===b.dataset.time),b)))}catch(e){$("#slots").innerHTML=`<div class="empty">${DPRO_GYOSEI.escapeHtml(e.message)}</div>`}
+    }
+    function selectSlot(slot,button){const staff=slot.staff[0];App.selectedSlot={starts_at:slot.starts_at,time:slot.time,staff_id:staff.id,staff_name:staff.display_name};$$('.slot').forEach(x=>x.classList.toggle('selected',x===button));renderSlotDetail()}
+    function renderSlotDetail(){const d=$("#slotDetail");if(!App.selectedSlot){d.classList.remove('show');d.innerHTML='';return}d.classList.add('show');d.innerHTML=`<strong>選択中</strong><br>${DPRO_GYOSEI.escapeHtml($("#appointmentDate").value)} ${DPRO_GYOSEI.escapeHtml(App.selectedSlot.time)}／担当：${DPRO_GYOSEI.escapeHtml(App.selectedSlot.staff_name)}`}
+    function formData(){
+      const answers=$$('#dynamicQuestions [data-question]').filter(x=>x.value).map(x=>({label:x.dataset.question,answer_text:x.value}));
+      return {category_id:App.selectedCategory.id,category_name:App.selectedCategory.category_name,customer_type:document.querySelector('input[name="customer_type"]:checked').value,full_name:$("#fullName").value.trim(),full_name_kana:$("#fullNameKana").value.trim(),phone:$("#phone").value.trim(),email:$("#email").value.trim(),corporation_name:$("#corporationName").value.trim(),representative_name:$("#representativeName").value.trim(),department:$("#department").value.trim(),position_title:$("#positionTitle").value.trim(),subject:$("#subject").value.trim(),summary:$("#summary").value.trim(),preferred_contact_time:$("#preferredContactAt").value,answers,line_user_id:App.lineUserId,booking:$("#bookingYes").checked,appointment_type:document.querySelector('input[name="appointment_type"]:checked').value};
+    }
+    function renderReview(){const d=formData();const answerText=d.answers.length?d.answers.map(a=>`${a.label}：${a.answer_text}`).join('\n'):'－';const booking=d.booking?`${$("#appointmentDate").value} ${App.selectedSlot.time}（${typeLabel(d.appointment_type)}）`:'今回は予約しない';$("#reviewArea").innerHTML=reviewBlock('ご相談内容',[['相談分野',d.category_name],['件名',d.subject],['現在の状況',d.summary],['事前確認',answerText]])+reviewBlock('お客様情報',[['区分',d.customer_type==='corporate'?'法人':'個人'],['お名前',d.full_name],['電話番号',d.phone],['メール',d.email||'－'],...(d.customer_type==='corporate'?[['法人名',d.corporation_name]]:[])])+reviewBlock('面談予約',[['希望',booking]])}
+    function reviewBlock(title,rows){return `<div class="review"><h3>${title}</h3><dl>${rows.map(r=>`<div class="review-row"><dt>${DPRO_GYOSEI.escapeHtml(r[0])}</dt><dd>${DPRO_GYOSEI.escapeHtml(r[1])}</dd></div>`).join('')}</dl></div>`}
+    function typeLabel(v){return {visit:'事務所へ来所',phone:'電話相談',online:'オンライン'}[v]||v}
+    async function submit(e){
+      e.preventDefault();if(!$("#agree").checked){toast('個人情報の取扱いへの同意が必要です。',true);return}
+      const d=formData();showLoading(true,'相談内容を送信しています…');$("#submitButton").disabled=true;
+      try{
+        const inquiry=await DPRO_GYOSEI.apiFetch('/api/public/inquiries',{method:'POST',body:{category_id:d.category_id,customer_type:d.customer_type,full_name:d.full_name,full_name_kana:d.full_name_kana,phone:d.phone,email:d.email,corporation_name:d.corporation_name,representative_name:d.representative_name,department:d.department,position_title:d.position_title,subject:d.subject,summary:d.summary+(d.preferred_contact_time?'\n連絡希望：'+d.preferred_contact_time:''),answers:d.answers,line_user_id:d.line_user_id}});
+        let appointment=null;if(d.booking){showLoading(true,'面談予約を登録しています…');appointment=await DPRO_GYOSEI.apiFetch('/api/public/appointments',{method:'POST',body:{inquiry_id:inquiry.inquiry.id,category_id:d.category_id,staff_id:App.selectedSlot.staff_id,starts_at:App.selectedSlot.starts_at,duration_minutes:60,appointment_type:d.appointment_type,full_name:d.full_name,phone:d.phone,email:d.email,line_user_id:d.line_user_id,customer_note:d.subject}})}
+        $("#consultForm").hidden=true;$("#progress").hidden=true;$("#complete").hidden=false;$("#receiptCode").textContent=inquiry.inquiry.inquiry_code;if(appointment)$("#appointmentReceipt").innerHTML=`<strong>面談予約</strong>${DPRO_GYOSEI.formatDate(appointment.appointment.starts_at,true)}／${typeLabel(d.appointment_type)}`;window.scrollTo({top:document.querySelector('.panel').offsetTop-12,behavior:'smooth'});
+      }catch(err){toast(err.message||'送信に失敗しました。',true);$("#submitButton").disabled=false}finally{showLoading(false)}
+    }
+    function showLoading(show,text){$("#loading").classList.toggle('show',show);if(text)$("#loadingText").textContent=text}
+    let toastTimer;function toast(msg,error){clearTimeout(toastTimer);const t=$("#toast");t.textContent=msg;t.className='toast show'+(error?' error':'');toastTimer=setTimeout(()=>t.classList.remove('show'),4200)}
+  </script>
+</body>
+</html>
