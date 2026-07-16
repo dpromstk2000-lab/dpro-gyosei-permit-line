@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17324D">
+  <meta name="description" content="DPRO 行政書士・許認可申請 LINE 事務所責任者用PC管理画面">
+  <title>DPRO行政書士事務所｜事務所管理</title>
+  <script src="config.js"></script>
+  <style>
+    :root{
+      --navy:#17324d;--navy2:#10283d;--teal:#247b78;--teal2:#1c6966;--bg:#f3f6f5;--card:#fff;
+      --text:#17212b;--muted:#617180;--line:#d8e1e4;--soft:#edf4f3;--ok:#2f855a;--okbg:#eaf6ee;
+      --warn:#b96910;--warnbg:#fff4e2;--danger:#b42318;--dangerbg:#fff0ef;--blue:#2c65a8;--bluebg:#eaf2fb;
+      --purple:#7651a8;--purplebg:#f2edfa;--shadow:0 10px 28px rgba(23,50,77,.08);--radius:16px;
+      --sidebar:260px;
+    }
+    *{box-sizing:border-box}
+    html{font-size:16px;scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.65;-webkit-text-size-adjust:100%}
+    button,input,select,textarea{font:inherit;color:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    .hidden{display:none!important}
+    .muted{color:var(--muted)}
+    .nowrap{white-space:nowrap}
+    .pre{white-space:pre-wrap;overflow-wrap:anywhere}
+    .gate{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#10283d,#173f52 68%,#247b78)}
+    .gate-card{width:min(540px,100%);background:#fff;border-radius:24px;padding:31px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+    .gate-mark{width:74px;height:74px;border-radius:22px;display:grid;place-items:center;margin:0 auto 15px;background:linear-gradient(145deg,var(--navy),var(--teal));color:#fff;font-weight:950;font-size:34px}
+    .gate h1{margin:0;text-align:center;color:var(--navy);font-size:27px;line-height:1.35}
+    .gate p{text-align:center;color:var(--muted);margin:8px 0 22px}
+    .field{display:grid;gap:7px;margin-bottom:15px}
+    .field label{font-weight:850;color:#2a3c49}
+    .input,select,textarea{width:100%;border:1.5px solid #b9c7cd;border-radius:12px;background:#fff;padding:11px 13px;outline:none;min-height:49px}
+    textarea{min-height:112px;resize:vertical}
+    .input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(36,123,120,.13)}
+    .gate-actions{display:grid;grid-template-columns:1fr auto;gap:10px}
+    .gate-note{margin-top:16px;padding:12px 14px;border:1px solid #ead2aa;border-radius:12px;background:#fff8eb;color:#6c4b1c;font-size:14px}
+    .app{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr)}
+    .sidebar{position:fixed;z-index:40;inset:0 auto 0 0;width:var(--sidebar);background:var(--navy2);color:#fff;display:flex;flex-direction:column;box-shadow:8px 0 30px rgba(16,40,61,.14)}
+    .brand{padding:19px 17px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .brand-row{display:flex;align-items:center;gap:11px}
+    .brand-mark{width:47px;height:47px;border-radius:14px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:950;font-size:23px;flex:0 0 auto}
+    .brand strong{display:block;font-size:17px;line-height:1.3}
+    .brand small{display:block;color:#c8dbe0;font-size:12px;margin-top:2px}
+    .office-chip{margin-top:13px;padding:9px 10px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:11px;font-size:13px;color:#e5f0f2;overflow-wrap:anywhere}
+    .nav{padding:13px 10px;overflow:auto;display:grid;gap:4px}
+    .nav button{border:0;background:transparent;color:#dbe7ea;text-align:left;min-height:46px;border-radius:11px;padding:9px 11px;font-weight:760;display:flex;align-items:center;gap:10px}
+    .nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nav button.active{background:#fff;color:var(--navy);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+    .nav-icon{width:25px;text-align:center;font-size:17px}
+    .nav-count{margin-left:auto;min-width:24px;height:22px;border-radius:999px;padding:0 7px;display:grid;place-items:center;background:rgba(255,255,255,.13);font-size:12px}
+    .nav button.active .nav-count{background:var(--soft);color:var(--teal)}
+    .sidebar-foot{margin-top:auto;padding:13px 12px;border-top:1px solid rgba(255,255,255,.12);display:grid;gap:8px}
+    .side-btn{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;min-height:42px;font-weight:800}
+    .main{grid-column:2;min-width:0}
+    .topbar{position:sticky;top:0;z-index:30;min-height:72px;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);display:flex;align-items:center;padding:10px 20px;gap:12px}
+    .menu-btn{display:none;width:45px;height:45px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:21px}
+    .page-title{min-width:0}
+    .page-title h1{margin:0;color:var(--navy);font-size:24px;line-height:1.3}
+    .page-title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .admin-chip{padding:8px 11px;border-radius:10px;background:var(--soft);color:var(--teal);font-size:13px;font-weight:850}
+    .content{max-width:1540px;margin:auto;padding:22px 23px 70px}
+    .view{display:none}
+    .view.active{display:block}
+    .toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+    .toolbar .input,.toolbar select{width:auto;min-width:170px}
+    .toolbar .search{flex:1;min-width:260px}
+    .toolbar-spacer{flex:1}
+    .btn{border:0;border-radius:11px;min-height:45px;padding:9px 14px;font-weight:850;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+    .btn-primary{background:var(--teal);color:#fff;box-shadow:0 6px 14px rgba(36,123,120,.2)}
+    .btn-primary:hover{background:var(--teal2)}
+    .btn-navy{background:var(--navy);color:#fff}
+    .btn-light{background:#eef2f3;color:#425662;border:1px solid #d4dfe2}
+    .btn-outline{background:#fff;color:var(--teal);border:1.5px solid var(--teal)}
+    .btn-danger{background:var(--dangerbg);color:var(--danger);border:1px solid #edc0bc}
+    .btn-warn{background:var(--warnbg);color:#80500e;border:1px solid #eacb9c}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn-sm{min-height:38px;padding:7px 10px;font-size:13px}
+    .summary-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:19px}
+    .summary-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px;box-shadow:var(--shadow);text-align:left;min-width:0}
+    button.summary-card{cursor:pointer}
+    button.summary-card:hover{border-color:#9bc1bf;transform:translateY(-1px)}
+    .summary-card span{display:block;color:var(--muted);font-size:13px;font-weight:750}
+    .summary-card strong{display:block;color:var(--navy);font-size:29px;line-height:1.25;margin-top:3px}
+    .summary-card small{color:var(--muted)}
+    .dashboard-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:15px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 5px 20px rgba(23,50,77,.05);overflow:hidden}
+    .panel + .panel{margin-top:15px}
+    .panel-head{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;background:#fbfcfc}
+    .panel-head h2{margin:0;color:var(--navy);font-size:19px}
+    .panel-head p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .panel-head .right{margin-left:auto}
+    .panel-body{padding:15px 17px}
+    .list{display:grid;gap:9px}
+    .item{border:1px solid var(--line);border-radius:13px;background:#fff;padding:12px 13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+    .item:hover{border-color:#aac6c4}
+    .item h3{margin:0;color:var(--navy);font-size:16px;line-height:1.45}
+    .item p{margin:3px 0 0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+    .item-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+    .item-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    .badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:850;background:#edf1f2;color:#4b5d68}
+    .badge.ok{background:var(--okbg);color:#25643a}
+    .badge.warn{background:var(--warnbg);color:#80500e}
+    .badge.danger{background:var(--dangerbg);color:var(--danger)}
+    .badge.blue{background:var(--bluebg);color:#285d93}
+    .badge.purple{background:var(--purplebg);color:#674393}
+    .badge.teal{background:#e7f5f3;color:#17625e}
+    .badge.navy{background:#e9eef3;color:var(--navy)}
+    .empty{padding:30px 18px;text-align:center;color:var(--muted);border:1px dashed #b8c6cb;border-radius:13px;background:#fafcfc}
+    .empty strong{display:block;color:var(--navy);font-size:17px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}
+    table{width:100%;border-collapse:collapse;min-width:920px}
+    th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #e7edef;vertical-align:top}
+    th{position:sticky;top:0;background:#f1f5f5;color:#4f616c;font-size:12px;white-space:nowrap;z-index:1}
+    td{font-size:14px}
+    tbody tr:hover{background:#fbfdfd}
+    tbody tr:last-child td{border-bottom:0}
+    .cell-title{font-weight:850;color:var(--navy)}
+    .cell-sub{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .click-row{cursor:pointer}
+    .section-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:15px}
+    .section-intro h2{margin:0;color:var(--navy);font-size:23px}
+    .section-intro p{margin:3px 0 0;color:var(--muted)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .today-card{border-left:5px solid var(--teal)}
+    .today-card.overdue{border-left-color:var(--danger)}
+    .datebox{min-width:76px;border-radius:11px;background:#eaf5f3;color:var(--teal);padding:7px 8px;text-align:center;font-weight:900}
+    .datebox strong{display:block;font-size:19px;line-height:1.2}
+    .search-results{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .settings-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(330px,.9fr);gap:15px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .form-grid .wide{grid-column:1/-1}
+    .check-row{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid var(--line);border-radius:11px;background:#fafcfc}
+    .check-row input{margin-top:5px;transform:scale(1.15)}
+    .check-row strong{display:block;color:var(--navy)}
+    .check-row small{display:block;color:var(--muted)}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .info-box{border:1px solid var(--line);border-radius:12px;background:#f9fbfb;padding:11px}
+    .info-box span{display:block;color:var(--muted);font-size:12px;font-weight:750}
+    .info-box strong{display:block;color:var(--navy);margin-top:2px;overflow-wrap:anywhere}
+    .notice{padding:12px 14px;border-radius:12px;border:1px solid #d6e5e4;background:#f0f8f7;color:#385955}
+    .notice.warn{border-color:#e8ca9d;background:#fff7e9;color:#6f4a14}
+    .notice.danger{border-color:#edbfbb;background:#fff1f0;color:#81241d}
+    .status-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .status-box{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fafcfc}
+    .status-box label{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-bottom:5px}
+    .status-box select{min-height:43px}
+    .copy-box{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fff}
+    .copy-box h3{margin:0;color:var(--navy);font-size:17px}
+    .copy-box p{margin:8px 0;color:#40535f;white-space:pre-wrap}
+    .copy-actions{display:flex;gap:8px;justify-content:flex-end}
+    .security{margin-top:15px;padding:13px;border-radius:12px;background:#eef3f5;color:#435761;font-size:13px}
+    .security strong{color:var(--navy)}
+    .drawer-cover{display:none;position:fixed;z-index:35;inset:0;background:rgba(8,25,38,.48)}
+    .modal-backdrop{position:fixed;z-index:80;inset:0;background:rgba(8,25,38,.58);padding:18px;display:grid;place-items:center;backdrop-filter:blur(3px)}
+    .modal{width:min(1160px,100%);max-height:calc(100vh - 36px);background:#fff;border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.32);display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}
+    .modal.small{width:min(620px,100%)}
+    .modal-head{background:var(--navy);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:12px}
+    .modal-head h2{margin:0;font-size:20px}
+    .modal-head p{margin:2px 0 0;color:#d7e6ea;font-size:13px}
+    .modal-close{margin-left:auto;width:43px;height:43px;border-radius:11px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-size:22px}
+    .modal-body{overflow:auto;padding:18px}
+    .tabs{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:15px}
+    .tab{border:1px solid var(--line);background:#fff;border-radius:999px;min-height:40px;padding:7px 12px;font-weight:800;white-space:nowrap;color:#4c5f6b}
+    .tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .modal-section{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+    .modal-section-head{padding:11px 13px;background:#f3f6f6;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+    .modal-section-head h3{margin:0;color:var(--navy);font-size:17px}
+    .modal-section-body{padding:13px}
+    .loading{position:fixed;z-index:120;inset:0;background:rgba(10,31,46,.5);display:grid;place-items:center}
+    .loading-card{background:#fff;border-radius:17px;padding:23px 27px;min-width:230px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .spinner{width:43px;height:43px;border:5px solid #dce7e7;border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;z-index:130;left:50%;bottom:24px;transform:translateX(-50%);max-width:min(620px,90%);background:#263b48;color:#fff;border-radius:12px;padding:12px 18px;box-shadow:0 12px 35px rgba(0,0,0,.28)}
+    .toast.error{background:var(--danger)}
+    @media(max-width:1250px){
+      .summary-grid{grid-template-columns:repeat(3,1fr)}
+      .dashboard-grid{grid-template-columns:1fr}
+      .status-board{grid-template-columns:1fr 1fr}
+      .info-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:900px){
+      .app{display:block}.main{grid-column:auto}
+      .sidebar{transform:translateX(-105%);transition:.2s}.sidebar.open{transform:translateX(0)}
+      .drawer-cover.show{display:block}.menu-btn{display:grid;place-items:center}
+      .topbar{padding:10px 13px}.content{padding:17px 13px 65px}
+      .settings-grid,.two-col,.search-results{grid-template-columns:1fr}
+    }
+    @media(max-width:640px){
+      body{font-size:16px}.gate-card{padding:24px 18px}.gate-actions{grid-template-columns:1fr}
+      .page-title h1{font-size:20px}.page-title p,.admin-chip{display:none}
+      .top-actions .btn span{display:none}.summary-grid{grid-template-columns:1fr 1fr;gap:9px}.summary-card{padding:12px}.summary-card strong{font-size:25px}
+      .form-grid,.three-col,.status-board,.info-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}
+      .toolbar .input,.toolbar select,.toolbar .search{width:100%;min-width:0}.toolbar .btn{flex:1}
+      .section-intro{align-items:flex-start}.section-intro p{display:none}.item{grid-template-columns:1fr}.item-actions{justify-content:flex-start}
+      .modal-backdrop{padding:0}.modal{border-radius:0;max-height:100vh;min-height:100vh}.modal-body{padding:14px}
+    }
+  </style>
+</head>
+<body>
+  <section id="gate" class="gate">
+    <div class="gate-card">
+      <div class="gate-mark">行</div>
+      <h1>事務所管理画面</h1>
+      <p>管理コードを入力して、相談・案件・書類・期限を一元管理します。</p>
+      <form id="adminLoginForm">
+        <div class="field">
+          <label for="adminCodeInput">管理コード</label>
+          <input id="adminCodeInput" class="input" type="password" inputmode="numeric" autocomplete="one-time-code" placeholder="管理コードを入力">
+        </div>
+        <div class="gate-actions">
+          <button class="btn btn-primary" type="submit">管理画面を開く</button>
+          <button id="clearCodeGateButton" class="btn btn-light" type="button">入力を削除</button>
+        </div>
+      </form>
+      <div class="gate-note">
+        デモ環境の管理コードは <strong>1234</strong> です。管理コードはブラウザのセッション内だけに保持し、個人情報は端末へ保存しません。
+      </div>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="brand">
+        <div class="brand-row">
+          <div class="brand-mark">行</div>
+          <div><strong>DPRO 行政書士</strong><small>許認可申請 LINE</small></div>
+        </div>
+        <div id="sidebarOfficeName" class="office-chip">DPRO行政書士事務所</div>
+      </div>
+      <nav class="nav">
+        <button data-view="dashboard" class="active"><span class="nav-icon">▦</span>ダッシュボード</button>
+        <button data-view="today"><span class="nav-icon">✓</span>今日やること<span id="navTodayCount" class="nav-count">0</span></button>
+        <button data-view="inquiries"><span class="nav-icon">✉</span>新規相談<span id="navInquiryCount" class="nav-count">0</span></button>
+        <button data-view="appointments"><span class="nav-icon">▣</span>面談予約<span id="navAppointmentCount" class="nav-count">0</span></button>
+        <button data-view="cases"><span class="nav-icon">案</span>案件一覧<span id="navCaseCount" class="nav-count">0</span></button>
+        <button data-view="clients"><span class="nav-icon">人</span>顧客・法人</button>
+        <button data-view="documents"><span class="nav-icon">書</span>必要書類<span id="navDocumentCount" class="nav-count">0</span></button>
+        <button data-view="deadlines"><span class="nav-icon">期</span>期限・更新<span id="navDeadlineCount" class="nav-count">0</span></button>
+        <button data-view="messages"><span class="nav-icon">文</span>LINE文面</button>
+        <button data-view="settings"><span class="nav-icon">⚙</span>事務所設定</button>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="refreshAllSideButton" class="side-btn" type="button">↻ 全データ更新</button>
+        <button id="clearAdminCodeButton" class="side-btn" type="button">管理コードを削除</button>
+      </div>
+    </aside>
+    <div id="drawerCover" class="drawer-cover"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuButton" class="menu-btn" type="button" aria-label="メニュー">☰</button>
+        <div class="page-title">
+          <h1 id="pageTitle">ダッシュボード</h1>
+          <p id="pageSubtitle">本日の面談・新規相談・書類・期限を確認します。</p>
+        </div>
+        <div class="top-actions">
+          <div class="admin-chip">管理者モード</div>
+          <button id="refreshButton" class="btn btn-light" type="button">↻ <span>更新</span></button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="view-dashboard" class="view active">
+          <div class="summary-grid">
+            <button class="summary-card" data-jump="appointments"><span>本日の面談</span><strong id="sumTodayAppointments">0</strong><small>件</small></button>
+            <button class="summary-card" data-jump="inquiries"><span>未確認の相談</span><strong id="sumNewInquiries">0</strong><small>件</small></button>
+            <button class="summary-card" data-jump="cases"><span>進行中の案件</span><strong id="sumOpenCases">0</strong><small>件</small></button>
+            <button class="summary-card" data-jump="today"><span>未完了タスク</span><strong id="sumOpenTasks">0</strong><small>件</small></button>
+            <button class="summary-card" data-jump="deadlines"><span>未完了の期限</span><strong id="sumDeadlines">0</strong><small>件</small></button>
+            <button class="summary-card" data-jump="documents"><span>確認待ち書類</span><strong id="sumDocuments">0</strong><small>件</small></button>
+          </div>
+          <div class="dashboard-grid">
+            <div>
+              <section class="panel">
+                <div class="panel-head"><div><h2>今日の面談</h2><p>来所・電話・オンラインの予定</p></div><button class="btn btn-light btn-sm right" data-jump="appointments">一覧へ</button></div>
+                <div id="dashboardAppointments" class="panel-body list"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-head"><div><h2>新規相談・返信待ち</h2><p>早めの確認が必要な相談</p></div><button class="btn btn-light btn-sm right" data-jump="inquiries">一覧へ</button></div>
+                <div id="dashboardInquiries" class="panel-body list"></div>
+              </section>
+            </div>
+            <div>
+              <section class="panel">
+                <div class="panel-head"><div><h2>優先タスク</h2><p>期限順に表示</p></div><button class="btn btn-light btn-sm right" data-jump="today">一覧へ</button></div>
+                <div id="dashboardTasks" class="panel-body list"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-head"><div><h2>期限・更新</h2><p>近い期限を優先表示</p></div><button class="btn btn-light btn-sm right" data-jump="deadlines">一覧へ</button></div>
+                <div id="dashboardDeadlines" class="panel-body list"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-today" class="view">
+          <div class="section-intro"><div><h2>今日やること</h2><p>面談、期限超過、書類確認、担当タスクをまとめています。</p></div></div>
+          <div id="todayList" class="list"></div>
+        </section>
+
+        <section id="view-inquiries" class="view">
+          <div class="section-intro"><div><h2>新規相談</h2><p>LINE・Webから届いた相談を確認し、案件化できます。</p></div></div>
+          <div class="toolbar">
+            <input id="inquirySearch" class="input search" type="search" placeholder="氏名・電話・件名・受付番号で検索">
+            <select id="inquiryStatusFilter">
+              <option value="">すべての状態</option><option value="new">新規相談</option><option value="reviewing">確認中</option>
+              <option value="reply_waiting">返信待ち</option><option value="appointment_scheduled">面談予定</option>
+              <option value="converted">案件化済み</option><option value="closed">終了</option>
+            </select>
+            <button id="reloadInquiriesButton" class="btn btn-light" type="button">再読み込み</button>
+          </div>
+          <div id="inquiriesTable"></div>
+        </section>
+
+        <section id="view-appointments" class="view">
+          <div class="section-intro"><div><h2>面談予約</h2><p>来所・電話・オンライン面談を日付ごとに確認します。</p></div></div>
+          <div class="toolbar">
+            <input id="appointmentDateFilter" class="input" type="date">
+            <select id="appointmentStatusFilter">
+              <option value="">すべての状態</option><option value="reserved">予約受付</option><option value="confirmed">予約確定</option>
+              <option value="change_requested">変更依頼中</option><option value="cancel_requested">キャンセル依頼中</option>
+              <option value="completed">完了</option><option value="cancelled">取消</option><option value="no_show">来所なし</option>
+            </select>
+            <button id="appointmentTodayButton" class="btn btn-light" type="button">今日</button>
+            <button id="reloadAppointmentsButton" class="btn btn-light" type="button">再読み込み</button>
+          </div>
+          <div id="appointmentsTable"></div>
+        </section>
+
+        <section id="view-cases" class="view">
+          <div class="section-intro"><div><h2>案件一覧</h2><p>受任・必要書類・申請・更新を別々の状態で管理します。</p></div></div>
+          <div class="toolbar">
+            <input id="caseSearch" class="input search" type="search" placeholder="案件名・案件番号・顧客名・法人名で検索">
+            <select id="caseOverallFilter">
+              <option value="open">進行中</option><option value="on_hold">保留</option><option value="completed">完了</option><option value="cancelled">取消</option>
+            </select>
+            <button id="reloadCasesButton" class="btn btn-light" type="button">再読み込み</button>
+          </div>
+          <div id="casesTable"></div>
+        </section>
+
+        <section id="view-clients" class="view">
+          <div class="section-intro"><div><h2>顧客・法人検索</h2><p>氏名・電話番号・顧客番号・法人名から検索します。</p></div></div>
+          <div class="toolbar">
+            <input id="clientSearchInput" class="input search" type="search" placeholder="例：山田、090-1111-2301、CL-、株式会社">
+            <button id="clientSearchButton" class="btn btn-primary" type="button">検索</button>
+            <button id="clientListButton" class="btn btn-light" type="button">最近の顧客</button>
+          </div>
+          <div class="notice">電話番号は、ハイフン・空白・全角・+81形式を正規化して同じ番号として検索します。</div>
+          <div id="clientSearchMeta" class="muted" style="margin:12px 0"></div>
+          <div id="clientResults" class="search-results"></div>
+        </section>
+
+        <section id="view-documents" class="view">
+          <div class="section-intro"><div><h2>必要書類管理</h2><p>未提出・確認中・不足・差し替え依頼を一括確認します。</p></div></div>
+          <div class="toolbar">
+            <input id="documentSearch" class="input search" type="search" placeholder="書類名・案件名・案件番号で検索">
+            <select id="documentStatusFilter">
+              <option value="">すべての状態</option><option value="not_submitted">未提出</option><option value="submitted">提出済み</option>
+              <option value="checking">確認中</option><option value="accepted">確認完了</option><option value="deficient">不足あり</option>
+              <option value="replacement_requested">差し替え依頼</option><option value="not_applicable">対象外</option>
+            </select>
+            <button id="reloadDocumentsButton" class="btn btn-light" type="button">再読み込み</button>
+          </div>
+          <div class="notice warn">マイナンバー、マイナンバー記載書類、パスポート、在留カード、本人確認書類の画像は初期版では保存対象外です。</div>
+          <div id="documentsTable" style="margin-top:13px"></div>
+        </section>
+
+        <section id="view-deadlines" class="view">
+          <div class="section-intro"><div><h2>期限・更新管理</h2><p>提出期限、補正期限、許可更新時期を早い順に表示します。</p></div></div>
+          <div class="toolbar">
+            <input id="deadlineSearch" class="input search" type="search" placeholder="期限名・案件名・案件番号で検索">
+            <select id="deadlineRangeFilter">
+              <option value="all">すべて</option><option value="overdue">期限超過</option><option value="7">7日以内</option><option value="30">30日以内</option><option value="90">90日以内</option>
+            </select>
+            <button id="reloadDeadlinesButton" class="btn btn-light" type="button">再読み込み</button>
+          </div>
+          <div id="deadlinesTable"></div>
+        </section>
+
+        <section id="view-messages" class="view">
+          <div class="section-intro"><div><h2>LINE文面テンプレート</h2><p>必要書類案内・進捗連絡・面談案内をコピーして利用します。</p></div></div>
+          <div id="messageTemplates" class="three-col"></div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="section-intro"><div><h2>事務所設定</h2><p>事務所情報、予約期間、LINE本人連携ルールを設定します。</p></div></div>
+          <div class="settings-grid">
+            <section class="panel">
+              <div class="panel-head"><div><h2>基本情報</h2><p>公開画面にも使用される事務所情報</p></div></div>
+              <form id="settingsForm" class="panel-body">
+                <div class="form-grid">
+                  <div class="field wide"><label for="settingOfficeName">事務所名</label><input id="settingOfficeName" class="input" required></div>
+                  <div class="field wide"><label for="settingSubtitle">サブタイトル</label><input id="settingSubtitle" class="input"></div>
+                  <div class="field"><label for="settingPostalCode">郵便番号</label><input id="settingPostalCode" class="input"></div>
+                  <div class="field"><label for="settingPhone">電話番号</label><input id="settingPhone" class="input" type="tel"></div>
+                  <div class="field wide"><label for="settingAddress">住所</label><input id="settingAddress" class="input"></div>
+                  <div class="field"><label for="settingEmail">メール</label><input id="settingEmail" class="input" type="email"></div>
+                  <div class="field"><label for="settingWebsite">Webサイト</label><input id="settingWebsite" class="input" type="url"></div>
+                  <div class="field"><label for="settingMonths">予約受付期間</label><select id="settingMonths"><option value="1">1か月先まで</option><option value="2">2か月先まで</option><option value="3">3か月先まで</option><option value="4">4か月先まで</option><option value="6">6か月先まで</option><option value="12">12か月先まで</option></select></div>
+                  <div class="field"><label>予約時間単位</label><input class="input" value="30分固定" disabled></div>
+                  <label class="check-row wide"><input id="settingLineApproval" type="checkbox"><span><strong>LINE本人連携を事務所承認制にする</strong><small>電話番号だけで案件情報を公開せず、事務所承認後にマイページを表示します。</small></span></label>
+                  <label class="check-row wide"><input id="settingActive" type="checkbox"><span><strong>事務所システムを利用可能にする</strong><small>停止すると公開画面も利用できなくなります。</small></span></label>
+                </div>
+                <div class="toolbar" style="margin:15px 0 0"><button class="btn btn-primary" type="submit">事務所設定を保存</button></div>
+              </form>
+            </section>
+            <div>
+              <section class="panel">
+                <div class="panel-head"><div><h2>営業前チェック</h2><p>デモ・公開前の接続確認</p></div></div>
+                <div class="panel-body">
+                  <div class="toolbar"><button id="systemCheckButton" class="btn btn-navy" type="button">system-check実行</button><button id="demoPrepareButton" class="btn btn-warn" type="button">デモデータ再準備</button></div>
+                  <div id="systemCheckResult" class="notice">未実行です。</div>
+                </div>
+              </section>
+              <section class="panel">
+                <div class="panel-head"><div><h2>スタッフ</h2><p>現在登録されている担当者</p></div></div>
+                <div id="staffList" class="panel-body list"></div>
+              </section>
+            </div>
+          </div>
+          <section class="panel" style="margin-top:15px">
+            <div class="panel-head"><div><h2>営業時間・相談分野</h2><p>STEP GYOSEI-7では確認表示。編集機能は専用設定API追加後に対応します。</p></div></div>
+            <div class="panel-body two-col"><div><h3 style="color:var(--navy)">曜日別営業時間</h3><div id="businessHoursList" class="list"></div></div><div><h3 style="color:var(--navy)">公開相談分野</h3><div id="categorySettingsList" class="list"></div></div></div>
+          </section>
+          <div class="security"><strong>安全設計：</strong>Service Role KeyはWorker内だけで使用します。ブラウザからSupabaseへ直接接続せず、すべてWorker API経由で保存・再読込します。</div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden">
+    <div id="modal" class="modal">
+      <div class="modal-head"><div><h2 id="modalTitle">詳細</h2><p id="modalSubtitle"></p></div><button id="modalCloseButton" class="modal-close" type="button">×</button></div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+  <div id="loading" class="loading hidden"><div class="loading-card"><div class="spinner"></div><strong id="loadingText">読み込み中…</strong></div></div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+  (() => {
+    "use strict";
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
+    const esc = v => DPRO_GYOSEI.escapeHtml(v == null ? "" : v);
+    const rel = (obj,key) => { const v=obj?.[key]; return Array.isArray(v) ? (v[0]||null) : (v||null); };
+    const val = (id) => { const e=$("#"+id); return e ? String(e.value||"").trim() : ""; };
+    const setVal = (id,v) => { const e=$("#"+id); if(e) e.value=v==null?"":String(v); };
+    const setText = (id,v) => { const e=$("#"+id); if(e) e.textContent=v==null?"":String(v); };
+    const today = () => DPRO_GYOSEI.todayJst();
+    const nowMs = () => Date.now();
+    const toDateKey = v => { if(!v) return ""; const d=new Date(v); if(!Number.isFinite(d.getTime())) return String(v).slice(0,10); return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).format(d); };
+    const fmtDate = v => DPRO_GYOSEI.formatDate(v,false);
+    const fmtDateTime = v => DPRO_GYOSEI.formatDate(v,true);
+    const fmtTime = v => { if(!v)return "－"; const d=new Date(v); if(!Number.isFinite(d.getTime()))return String(v).slice(11,16); return new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",hour12:false}).format(d); };
+    const daysUntil = v => { if(!v)return null; const a=new Date(today()+"T00:00:00+09:00"); const b=new Date(String(v).slice(0,10)+"T00:00:00+09:00"); return Math.round((b-a)/86400000); };
+    const label = v => {
+      const map={
+        new:"新規相談",reviewing:"確認中",reply_waiting:"返信待ち",appointment_scheduled:"面談予定",converted:"案件化済み",closed:"終了",
+        not_decided:"受任未確定",estimate_preparing:"見積準備中",estimate_sent:"見積案内済み",accepted:"受任済み",declined:"辞退・不受任",
+        not_started:"未着手",requested:"書類依頼済み",partially_received:"一部受領",deficient:"不足あり",complete:"書類完了",
+        preparing:"申請準備中",ready_to_submit:"提出準備完了",submitted:"提出済み",under_review:"審査中",correction_required:"補正対応",approved:"許可・完了",rejected:"不許可",withdrawn:"取下げ",
+        open:"進行中",on_hold:"保留",completed:"完了",cancelled:"取消",not_required:"更新対象外",future:"将来更新",notice_due:"案内時期",notified:"更新案内済み",renewal_in_progress:"更新手続き中",renewed:"更新完了",expired:"期限経過",
+        reserved:"予約受付",confirmed:"予約確定",change_requested:"変更依頼中",cancel_requested:"キャンセル依頼中",no_show:"来所なし",
+        not_submitted:"未提出",checking:"確認中",replacement_requested:"差し替え依頼",not_applicable:"対象外",
+        in_progress:"対応中",low:"低",normal:"通常",high:"高",urgent:"緊急",
+        pending:"承認待ち",revoked:"連携解除",unlinked:"未連携",
+        in_person:"来所",phone:"電話",online:"オンライン",
+        reply:"返信",document_check:"書類確認",appointment:"面談",submission:"申請提出",correction:"補正",follow_up:"フォロー",renewal:"更新",other:"その他",
+        owner:"責任者",gyoseishoshi:"行政書士",staff:"スタッフ"
+      };
+      return map[v] || DPRO_GYOSEI.statusLabel(v) || v || "－";
+    };
+    const badgeTone = v => {
+      if(["approved","accepted","complete","completed","confirmed","renewed"].includes(v))return "ok";
+      if(["deficient","correction_required","expired","urgent","rejected","cancelled","no_show"].includes(v))return "danger";
+      if(["new","submitted","checking","replacement_requested","notice_due","change_requested","cancel_requested","high"].includes(v))return "warn";
+      if(["under_review","preparing","ready_to_submit","in_progress","reserved"].includes(v))return "blue";
+      if(["on_hold","future","notified","renewal_in_progress"].includes(v))return "purple";
+      return "teal";
+    };
+    const badge = v => `<span class="badge ${badgeTone(v)}">${esc(label(v))}</span>`;
+    const empty = (title,text="") => `<div class="empty"><strong>${esc(title)}</strong>${text?`<div>${esc(text)}</div>`:""}</div>`;
+    const State={
+      currentView:"dashboard",dashboard:null,inquiries:[],appointments:[],cases:[],clients:[],corporations:[],
+      documents:[],deadlines:[],templates:[],staff:[],settings:null,currentCase:null,currentClient:null
+    };
+    const viewMeta={
+      dashboard:["ダッシュボード","本日の面談・新規相談・書類・期限を確認します。"],
+      today:["今日やること","今日と期限超過の対応をまとめて確認します。"],
+      inquiries:["新規相談","相談内容を確認し、担当設定・返信・案件化を行います。"],
+      appointments:["面談予約","来所・電話・オンラインの面談予定を管理します。"],
+      cases:["案件一覧","受任・書類・申請・更新の各状態を管理します。"],
+      clients:["顧客・法人","氏名・電話番号・顧客番号・法人名から検索します。"],
+      documents:["必要書類","提出・確認・不足・差し替え状態を管理します。"],
+      deadlines:["期限・更新","申請期限・更新期限を早い順に確認します。"],
+      messages:["LINE文面","定型文をコピーしてLINE公式チャットで使用します。"],
+      settings:["事務所設定","事務所情報・予約期間・本人連携ルールを設定します。"]
+    };
+
+    document.addEventListener("DOMContentLoaded", init);
+    function init(){
+      bind();
+      const q=new URL(location.href).searchParams;
+      if(q.get("demo")==="1" && !DPRO_GYOSEI.getAdminCode()) DPRO_GYOSEI.setAdminCode("1234");
+      const code=DPRO_GYOSEI.getAdminCode();
+      if(code){ $("#adminCodeInput").value=code; login(); }
+    }
+    function bind(){
+      $("#adminLoginForm").addEventListener("submit",e=>{e.preventDefault(); const code=val("adminCodeInput"); if(!code)return toast("管理コードを入力してください。",true); DPRO_GYOSEI.setAdminCode(code); login();});
+      $("#clearCodeGateButton").addEventListener("click",()=>$("#adminCodeInput").value="");
+      $("#clearAdminCodeButton").addEventListener("click",logout);
+      $("#refreshButton").addEventListener("click",()=>refreshView(true));
+      $("#refreshAllSideButton").addEventListener("click",()=>loadAll(true));
+      $("#menuButton").addEventListener("click",toggleMenu); $("#drawerCover").addEventListener("click",closeMenu);
+      $$(".nav button").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+      $$("[data-jump]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.jump)));
+      $("#modalCloseButton").addEventListener("click",closeModal);
+      $("#modalBackdrop").addEventListener("click",e=>{if(e.target===$("#modalBackdrop"))closeModal();});
+      document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+      $("#inquirySearch").addEventListener("input",renderInquiries); $("#inquiryStatusFilter").addEventListener("change",renderInquiries);
+      $("#reloadInquiriesButton").addEventListener("click",()=>loadInquiries(true));
+      $("#appointmentDateFilter").value=today(); $("#appointmentDateFilter").addEventListener("change",()=>loadAppointments(true));
+      $("#appointmentStatusFilter").addEventListener("change",renderAppointments);
+      $("#appointmentTodayButton").addEventListener("click",()=>{$("#appointmentDateFilter").value=today();loadAppointments(true);});
+      $("#reloadAppointmentsButton").addEventListener("click",()=>loadAppointments(true));
+      $("#caseSearch").addEventListener("input",renderCases); $("#caseOverallFilter").addEventListener("change",()=>loadCases(true));
+      $("#reloadCasesButton").addEventListener("click",()=>loadCases(true));
+      $("#clientSearchButton").addEventListener("click",searchClients);
+      $("#clientListButton").addEventListener("click",loadClients);
+      $("#clientSearchInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();searchClients();}});
+      $("#documentSearch").addEventListener("input",renderDocuments); $("#documentStatusFilter").addEventListener("change",renderDocuments);
+      $("#reloadDocumentsButton").addEventListener("click",()=>loadDocuments(true));
+      $("#deadlineSearch").addEventListener("input",renderDeadlines); $("#deadlineRangeFilter").addEventListener("change",renderDeadlines);
+      $("#reloadDeadlinesButton").addEventListener("click",()=>loadDeadlines(true));
+      $("#settingsForm").addEventListener("submit",saveSettings);
+      $("#systemCheckButton").addEventListener("click",systemCheck);
+      $("#demoPrepareButton").addEventListener("click",demoPrepare);
+    }
+    async function login(){
+      showLoading(true,"管理コードを確認しています…");
+      try{
+        await DPRO_GYOSEI.apiFetch("/api/admin/dashboard",{admin:true});
+        $("#gate").classList.add("hidden"); $("#app").classList.remove("hidden");
+        await loadAll(false);
+      }catch(e){
+        DPRO_GYOSEI.clearAdminCode();
+        $("#gate").classList.remove("hidden"); $("#app").classList.add("hidden");
+        toast(e.message||"管理コードを確認できませんでした。",true);
+      }finally{showLoading(false)}
+    }
+    function logout(){
+      if(!confirm("管理コードを削除して管理画面を閉じますか？"))return;
+      DPRO_GYOSEI.clearAdminCode(); State.dashboard=null;
+      $("#app").classList.add("hidden");$("#gate").classList.remove("hidden");$("#adminCodeInput").value="";closeMenu();
+    }
+    function toggleMenu(){$("#sidebar").classList.toggle("open");$("#drawerCover").classList.toggle("show")}
+    function closeMenu(){$("#sidebar").classList.remove("open");$("#drawerCover").classList.remove("show")}
+    function showView(name){
+      State.currentView=name;
+      $$(".view").forEach(v=>v.classList.toggle("active",v.id===`view-${name}`));
+      $$(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
+      const m=viewMeta[name]||viewMeta.dashboard; setText("pageTitle",m[0]);setText("pageSubtitle",m[1]);closeMenu();
+      refreshView(false); window.scrollTo({top:0,behavior:"smooth"});
+    }
+    async function refreshView(show){
+      const map={dashboard:loadDashboard,today:loadDashboard,inquiries:loadInquiries,appointments:loadAppointments,cases:loadCases,clients:loadClients,documents:loadDocuments,deadlines:loadDeadlines,messages:loadTemplates,settings:loadSettings};
+      const fn=map[State.currentView]; if(fn)await fn(show);
+    }
+    async function loadAll(show=true){
+      if(show)showLoading(true,"管理データを読み込んでいます…");
+      try{
+        await loadDashboard(false);
+        await Promise.allSettled([loadInquiries(false),loadAppointments(false),loadCases(false),loadDocuments(false),loadDeadlines(false),loadTemplates(false),loadSettings(false)]);
+        updateNavCounts();
+        if(show)toast("全データを更新しました。");
+      }finally{if(show)showLoading(false)}
+    }
+    async function loadDashboard(show=false){
+      if(show)showLoading(true,"ダッシュボードを更新しています…");
+      try{
+        State.dashboard=await DPRO_GYOSEI.apiFetch("/api/admin/dashboard",{admin:true});
+        const d=State.dashboard,s=d.summary||{};
+        setText("sumTodayAppointments",s.today_appointments||0);setText("sumNewInquiries",s.new_inquiries||0);setText("sumOpenCases",s.open_cases||0);
+        setText("sumOpenTasks",s.open_tasks||0);setText("sumDeadlines",s.upcoming_deadlines||0);setText("sumDocuments",s.documents_to_check||0);
+        renderDashboard();renderToday();updateNavCounts();
+      }catch(e){toast(e.message||"ダッシュボードを取得できませんでした。",true);}
+      finally{if(show)showLoading(false)}
+    }
+    function renderDashboard(){
+      const d=State.dashboard||{};
+      $("#dashboardAppointments").innerHTML=(d.appointments||[]).slice(0,6).map(a=>{
+        const c=rel(a,"gyosei_clients"),s=rel(a,"gyosei_staff");
+        return `<div class="item"><div><h3>${esc(fmtTime(a.starts_at))}　${esc(c?.full_name||"顧客未設定")} 様</h3><p>${esc(label(a.appointment_type))}・担当 ${esc(s?.display_name||"未設定")}</p><div class="item-meta">${badge(a.status)}</div></div><div class="item-actions"><button class="btn btn-light btn-sm" data-open-appointment="${esc(a.id)}">確認</button></div></div>`;
+      }).join("")||empty("本日の面談はありません");
+      $("#dashboardInquiries").innerHTML=(d.inquiries||[]).slice(0,6).map(i=>inquiryItem(i)).join("")||empty("未対応の相談はありません");
+      $("#dashboardTasks").innerHTML=(d.tasks||[]).slice(0,6).map(t=>taskItem(t)).join("")||empty("未完了タスクはありません");
+      $("#dashboardDeadlines").innerHTML=(d.deadlines||[]).slice(0,6).map(x=>deadlineItem(x)).join("")||empty("未完了の期限はありません");
+      bindDynamic();
+    }
+    function renderToday(){
+      const d=State.dashboard||{},items=[];
+      (d.appointments||[]).forEach(a=>items.push({kind:"appointment",sort:a.starts_at||"",html:`<div class="item today-card"><div><h3>${esc(fmtTime(a.starts_at))} 面談　${esc(rel(a,"gyosei_clients")?.full_name||"顧客未設定")} 様</h3><p>${esc(label(a.appointment_type))}・担当 ${esc(rel(a,"gyosei_staff")?.display_name||"未設定")}</p><div class="item-meta">${badge(a.status)}</div></div><div class="item-actions"><button class="btn btn-light btn-sm" data-open-appointment="${esc(a.id)}">確認</button></div></div>`}));
+      (d.tasks||[]).forEach(t=>{const dk=toDateKey(t.due_at),over=dk&&dk<today();if(!dk||dk<=today())items.push({kind:"task",sort:t.due_at||"9999",html:`<div class="item today-card ${over?"overdue":""}"><div><h3>${esc(t.title||"タスク")}</h3><p>${over?"期限超過":"本日期限"}・担当 ${esc(rel(t,"gyosei_staff")?.display_name||"未設定")}</p><div class="item-meta">${badge(t.priority)}${badge(t.status)}</div></div><div class="item-actions"><button class="btn btn-primary btn-sm" data-complete-task="${esc(t.id)}">完了</button>${t.case_id?`<button class="btn btn-light btn-sm" data-open-case="${esc(t.case_id)}">案件</button>`:""}</div></div>`})});
+      (d.deadlines||[]).forEach(x=>{const n=daysUntil(x.due_date);if(n!==null&&n<=7)items.push({kind:"deadline",sort:x.due_date||"",html:deadlineItem(x,true)});});
+      (d.documents||[]).forEach(x=>items.push({kind:"document",sort:x.due_date||"9999",html:`<div class="item today-card"><div><h3>書類確認：${esc(x.document_name)}</h3><p>${esc(rel(x,"gyosei_cases")?.case_code||"")} ${esc(rel(x,"gyosei_cases")?.title||"")}</p><div class="item-meta">${badge(x.status)}${x.due_date?`<span class="badge">${esc(fmtDate(x.due_date))}</span>`:""}</div></div><div class="item-actions"><button class="btn btn-light btn-sm" data-jump="documents">書類一覧</button></div></div>`}));
+      items.sort((a,b)=>String(a.sort).localeCompare(String(b.sort)));
+      $("#todayList").innerHTML=items.map(x=>x.html).join("")||empty("今日対応する項目はありません","新しい相談や期限が登録されるとここに表示されます。");
+      bindDynamic();
+    }
+    function inquiryItem(i){
+      const c=rel(i,"gyosei_clients"),cat=rel(i,"gyosei_service_categories");
+      return `<div class="item"><div><h3>${esc(i.subject||"相談")}</h3><p>${esc(i.inquiry_code||"")}・${esc(c?.full_name||"顧客未設定")} 様・${esc(cat?.category_name||"分野未設定")}</p><div class="item-meta">${badge(i.status)}${badge(i.priority)}</div></div><div class="item-actions"><button class="btn btn-light btn-sm" data-open-inquiry="${esc(i.id)}">確認</button></div></div>`;
+    }
+    function taskItem(t){
+      const c=rel(t,"gyosei_cases"),s=rel(t,"gyosei_staff"),over=t.due_at&&new Date(t.due_at).getTime()<nowMs();
+      return `<div class="item"><div><h3>${esc(t.title||"タスク")}</h3><p>${c?`${esc(c.case_code||"")} ${esc(c.title||"")}・`:""}担当 ${esc(s?.display_name||"未設定")}</p><div class="item-meta">${badge(t.priority)}${badge(t.status)}${t.due_at?`<span class="badge ${over?"danger":""}">${esc(fmtDateTime(t.due_at))}</span>`:""}</div></div><div class="item-actions"><button class="btn btn-primary btn-sm" data-complete-task="${esc(t.id)}">完了</button>${t.case_id?`<button class="btn btn-light btn-sm" data-open-case="${esc(t.case_id)}">案件</button>`:""}</div></div>`;
+    }
+    function deadlineItem(x,large=false){
+      const c=rel(x,"gyosei_cases"),n=daysUntil(x.due_date),tone=n<0?"danger":n<=7?"warn":"teal",txt=n<0?`${Math.abs(n)}日超過`:n===0?"本日":`あと${n}日`;
+      return `<div class="item today-card ${n<0?"overdue":""}"><div><h3>${esc(x.title||"期限")}</h3><p>${esc(c?.case_code||"")} ${esc(c?.title||"")}</p><div class="item-meta"><span class="badge ${tone}">${esc(txt)}</span><span class="badge">${esc(fmtDate(x.due_date))}</span></div></div><div class="item-actions">${x.case_id?`<button class="btn btn-light btn-sm" data-open-case="${esc(x.case_id)}">案件を開く</button>`:""}</div></div>`;
+    }
+    async function loadInquiries(show=false){
+      if(show)showLoading(true,"相談一覧を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/inquiries",{admin:true});State.inquiries=d.inquiries||[];renderInquiries();updateNavCounts();}
+      catch(e){toast(e.message||"相談一覧を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderInquiries(){
+      const q=val("inquirySearch").toLowerCase(),st=val("inquiryStatusFilter");
+      const rows=State.inquiries.filter(i=>{
+        const c=rel(i,"gyosei_clients"),corp=rel(i,"gyosei_corporations");
+        const hay=[i.inquiry_code,i.subject,i.summary,c?.full_name,c?.phone,corp?.legal_name].join(" ").toLowerCase();
+        return (!q||hay.includes(q))&&(!st||i.status===st);
+      });
+      $("#inquiriesTable").innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>受付・相談内容</th><th>顧客</th><th>分野</th><th>状態</th><th>担当</th><th>受付日時</th><th></th></tr></thead><tbody>${rows.map(i=>{
+        const c=rel(i,"gyosei_clients"),cat=rel(i,"gyosei_service_categories"),s=rel(i,"gyosei_staff");
+        return `<tr class="click-row" data-open-inquiry="${esc(i.id)}"><td><span class="cell-title">${esc(i.subject||"相談")}</span><span class="cell-sub">${esc(i.inquiry_code||"")}</span></td><td>${esc(c?.full_name||"－")}<span class="cell-sub">${esc(c?.phone||"")}</span></td><td>${esc(cat?.category_name||"－")}</td><td>${badge(i.status)} ${badge(i.priority)}</td><td>${esc(s?.display_name||"未設定")}</td><td>${esc(fmtDateTime(i.created_at))}</td><td><button class="btn btn-light btn-sm" type="button">詳細</button></td></tr>`;
+      }).join("")}</tbody></table></div>`:empty("該当する相談はありません");
+      bindDynamic();
+    }
+    async function openInquiry(id){
+      const i=State.inquiries.find(x=>String(x.id)===String(id))||(State.dashboard?.inquiries||[]).find(x=>String(x.id)===String(id)); if(!i)return;
+      const c=rel(i,"gyosei_clients"),corp=rel(i,"gyosei_corporations"),cat=rel(i,"gyosei_service_categories");
+      openModal("相談詳細",`${i.inquiry_code||""}　${c?.full_name||""} 様`,`
+        <div class="info-grid">
+          <div class="info-box"><span>相談分野</span><strong>${esc(cat?.category_name||"－")}</strong></div>
+          <div class="info-box"><span>顧客</span><strong>${esc(c?.full_name||"－")}</strong></div>
+          <div class="info-box"><span>電話番号</span><strong>${esc(c?.phone||"－")}</strong></div>
+          <div class="info-box"><span>法人</span><strong>${esc(corp?.legal_name||"－")}</strong></div>
+          <div class="info-box"><span>受付日時</span><strong>${esc(fmtDateTime(i.created_at))}</strong></div>
+          <div class="info-box"><span>現在の状態</span><strong>${esc(label(i.status))}</strong></div>
+        </div>
+        <section class="modal-section"><div class="modal-section-head"><h3>${esc(i.subject||"相談内容")}</h3></div><div class="modal-section-body pre">${esc(i.summary||"相談内容なし")}</div></section>
+        <form id="inquiryEditForm">
+          <section class="modal-section"><div class="modal-section-head"><h3>対応情報</h3></div><div class="modal-section-body form-grid">
+            <div class="field"><label>相談状態</label><select id="editInquiryStatus">${options(["new","reviewing","reply_waiting","appointment_scheduled","closed"],i.status)}</select></div>
+            <div class="field"><label>優先度</label><select id="editInquiryPriority">${options(["low","normal","high","urgent"],i.priority)}</select></div>
+            <div class="field"><label>担当者</label><select id="editInquiryStaff"><option value="">未設定</option>${staffOptions(i.assigned_staff_id)}</select></div>
+            <div class="field"><label>返信期限</label><input id="editInquiryDue" class="input" type="datetime-local" value="${esc(toLocalInput(i.response_due_at))}"></div>
+            <div class="field wide"><label>顧客向け案内</label><textarea id="editInquiryCustomerNote">${esc(i.customer_visible_note||"")}</textarea></div>
+            <div class="field wide"><label>内部メモ</label><textarea id="editInquiryInternalNote">${esc(i.internal_note||"")}</textarea></div>
+          </div></section>
+          <div class="toolbar"><button class="btn btn-primary" type="submit">対応情報を保存</button>${i.status!=="converted"?`<button id="convertInquiryButton" class="btn btn-navy" type="button">案件に変換</button>`:""}</div>
+        </form>`);
+      $("#inquiryEditForm").addEventListener("submit",async e=>{e.preventDefault();await patchInquiry(i.id);});
+      const cb=$("#convertInquiryButton");if(cb)cb.addEventListener("click",()=>convertInquiry(i));
+    }
+    async function patchInquiry(id){
+      showLoading(true,"相談情報を保存しています…");
+      try{
+        await DPRO_GYOSEI.apiFetch(`/api/admin/inquiries/${encodeURIComponent(id)}`,{method:"PATCH",admin:true,body:{status:val("editInquiryStatus"),priority:val("editInquiryPriority"),assigned_staff_id:val("editInquiryStaff")||null,response_due_at:fromLocalInput(val("editInquiryDue")),customer_visible_note:val("editInquiryCustomerNote"),internal_note:val("editInquiryInternalNote")}});
+        toast("相談情報を保存しました。");closeModal();await Promise.all([loadInquiries(false),loadDashboard(false)]);
+      }catch(e){toast(e.message||"保存に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function convertInquiry(i){
+      if(!confirm("この相談を案件に変換しますか？"))return;
+      showLoading(true,"案件を作成しています…");
+      try{
+        const d=await DPRO_GYOSEI.apiFetch(`/api/admin/inquiries/${encodeURIComponent(i.id)}/convert`,{method:"POST",admin:true,body:{title:i.subject,engagement_status:"not_decided",primary_staff_id:i.assigned_staff_id||null,customer_visible_summary:i.customer_visible_note||"",internal_summary:i.internal_note||""}});
+        toast(d.already_converted?"すでに案件化されています。":"案件を作成しました。");closeModal();await Promise.all([loadInquiries(false),loadCases(false),loadDashboard(false)]);if(d.case?.id)openCase(d.case.id);
+      }catch(e){toast(e.message||"案件化に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function loadAppointments(show=false){
+      if(show)showLoading(true,"面談予約を読み込んでいます…");
+      try{const date=val("appointmentDateFilter");const d=await DPRO_GYOSEI.apiFetch("/api/admin/appointments",{admin:true,params:date?{date}:null});State.appointments=d.appointments||[];renderAppointments();updateNavCounts();}
+      catch(e){toast(e.message||"面談予約を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderAppointments(){
+      const st=val("appointmentStatusFilter"),rows=State.appointments.filter(a=>!st||a.status===st);
+      $("#appointmentsTable").innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>日時</th><th>顧客</th><th>相談分野</th><th>方法</th><th>担当</th><th>状態</th><th></th></tr></thead><tbody>${rows.map(a=>{
+        const c=rel(a,"gyosei_clients"),cat=rel(a,"gyosei_service_categories"),s=rel(a,"gyosei_staff");
+        return `<tr class="click-row" data-open-appointment="${esc(a.id)}"><td><span class="cell-title">${esc(fmtDate(a.starts_at))}</span><span class="cell-sub">${esc(fmtTime(a.starts_at))}〜${esc(fmtTime(a.ends_at))}</span></td><td>${esc(c?.full_name||"－")}<span class="cell-sub">${esc(c?.phone||"")}</span></td><td>${esc(cat?.category_name||"－")}</td><td>${esc(label(a.appointment_type))}</td><td>${esc(s?.display_name||"未設定")}</td><td>${badge(a.status)}</td><td><button class="btn btn-light btn-sm">編集</button></td></tr>`;
+      }).join("")}</tbody></table></div>`:empty("この日の面談予約はありません");
+      bindDynamic();
+    }
+    async function openAppointment(id){
+      const a=State.appointments.find(x=>String(x.id)===String(id))||(State.dashboard?.appointments||[]).find(x=>String(x.id)===String(id));if(!a)return;
+      const c=rel(a,"gyosei_clients"),cat=rel(a,"gyosei_service_categories");
+      openModal("面談予約",`${a.appointment_code||""}　${c?.full_name||""} 様`,`
+        <form id="appointmentEditForm">
+          <div class="info-grid">
+            <div class="info-box"><span>顧客</span><strong>${esc(c?.full_name||"－")}</strong></div><div class="info-box"><span>電話</span><strong>${esc(c?.phone||"－")}</strong></div><div class="info-box"><span>相談分野</span><strong>${esc(cat?.category_name||"－")}</strong></div>
+          </div>
+          <section class="modal-section" style="margin-top:14px"><div class="modal-section-head"><h3>予約情報</h3></div><div class="modal-section-body form-grid">
+            <div class="field"><label>状態</label><select id="editAppointmentStatus">${options(["reserved","confirmed","change_requested","cancel_requested","completed","cancelled","no_show"],a.status)}</select></div>
+            <div class="field"><label>面談方法</label><select id="editAppointmentType">${options(["in_person","phone","online"],a.appointment_type)}</select></div>
+            <div class="field"><label>開始日時</label><input id="editAppointmentStart" class="input" type="datetime-local" step="1800" value="${esc(toLocalInput(a.starts_at))}"></div>
+            <div class="field"><label>終了日時</label><input id="editAppointmentEnd" class="input" type="datetime-local" step="1800" value="${esc(toLocalInput(a.ends_at))}"></div>
+            <div class="field"><label>担当者</label><select id="editAppointmentStaff"><option value="">未設定</option>${staffOptions(a.staff_id)}</select></div>
+            <div class="field"><label>オンラインURL</label><input id="editAppointmentUrl" class="input" type="url" value="${esc(a.meeting_url||"")}"></div>
+            <div class="field wide"><label>顧客向けメモ</label><textarea id="editAppointmentCustomerNote">${esc(a.customer_note||"")}</textarea></div>
+            <div class="field wide"><label>内部メモ</label><textarea id="editAppointmentInternalNote">${esc(a.internal_note||"")}</textarea></div>
+          </div></section>
+          <button class="btn btn-primary" type="submit">予約情報を保存</button>
+        </form>`);
+      $("#appointmentEditForm").addEventListener("submit",async e=>{e.preventDefault();showLoading(true,"予約を保存しています…");try{
+        await DPRO_GYOSEI.apiFetch(`/api/admin/appointments/${encodeURIComponent(a.id)}`,{method:"PATCH",admin:true,body:{status:val("editAppointmentStatus"),appointment_type:val("editAppointmentType"),starts_at:fromLocalInput(val("editAppointmentStart")),ends_at:fromLocalInput(val("editAppointmentEnd")),staff_id:val("editAppointmentStaff")||null,meeting_url:val("editAppointmentUrl")||null,customer_note:val("editAppointmentCustomerNote"),internal_note:val("editAppointmentInternalNote")}});
+        toast("予約情報を保存しました。");closeModal();await Promise.all([loadAppointments(false),loadDashboard(false)]);
+      }catch(err){toast(err.message||"保存に失敗しました。",true)}finally{showLoading(false)}});
+    }
+    async function loadCases(show=false){
+      if(show)showLoading(true,"案件一覧を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/cases",{admin:true,params:{overall_status:val("caseOverallFilter")||"open"}});State.cases=d.cases||[];renderCases();updateNavCounts();}
+      catch(e){toast(e.message||"案件一覧を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderCases(){
+      const q=val("caseSearch").toLowerCase(),rows=State.cases.filter(c=>{
+        const cl=rel(c,"gyosei_clients"),co=rel(c,"gyosei_corporations"),cat=rel(c,"gyosei_service_categories");
+        return !q||[c.case_code,c.title,cl?.full_name,cl?.phone,co?.legal_name,cat?.category_name].join(" ").toLowerCase().includes(q);
+      });
+      $("#casesTable").innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>案件</th><th>顧客・法人</th><th>担当</th><th>書類</th><th>申請</th><th>更新</th><th>次回対応</th><th></th></tr></thead><tbody>${rows.map(c=>{
+        const cl=rel(c,"gyosei_clients"),co=rel(c,"gyosei_corporations"),s=rel(c,"gyosei_staff");
+        return `<tr class="click-row" data-open-case="${esc(c.id)}"><td><span class="cell-title">${esc(c.title||"案件")}</span><span class="cell-sub">${esc(c.case_code||"")}</span></td><td>${esc(co?.legal_name||cl?.full_name||"－")}<span class="cell-sub">${esc(cl?.phone||"")}</span></td><td>${esc(s?.display_name||"未設定")}</td><td>${badge(c.document_status)}</td><td>${badge(c.application_status)}</td><td>${badge(c.renewal_status)}</td><td>${esc(c.next_action_date?fmtDate(c.next_action_date):"未設定")}</td><td><button class="btn btn-light btn-sm">詳細</button></td></tr>`;
+      }).join("")}</tbody></table></div>`:empty("該当する案件はありません");
+      bindDynamic();
+    }
+    async function openCase(id){
+      showLoading(true,"案件詳細を読み込んでいます…");
+      try{
+        const d=await DPRO_GYOSEI.apiFetch(`/api/admin/cases/${encodeURIComponent(id)}`,{admin:true});State.currentCase=d;
+        renderCaseModal();
+      }catch(e){toast(e.message||"案件詳細を取得できませんでした。",true)}finally{showLoading(false)}
+    }
+    function renderCaseModal(){
+      const d=State.currentCase,c=d.case,cl=rel(c,"gyosei_clients"),co=rel(c,"gyosei_corporations"),cat=rel(c,"gyosei_service_categories"),s=rel(c,"gyosei_staff");
+      openModal("案件詳細",`${c.case_code||""}　${c.title||""}`,`
+        <div class="info-grid">
+          <div class="info-box"><span>顧客</span><strong>${esc(cl?.full_name||"－")}</strong></div>
+          <div class="info-box"><span>法人</span><strong>${esc(co?.legal_name||"－")}</strong></div>
+          <div class="info-box"><span>相談分野</span><strong>${esc(cat?.category_name||"－")}</strong></div>
+          <div class="info-box"><span>電話番号</span><strong>${esc(cl?.phone||"－")}</strong></div>
+          <div class="info-box"><span>主担当</span><strong>${esc(s?.display_name||"未設定")}</strong></div>
+          <div class="info-box"><span>案件全体</span><strong>${esc(label(c.overall_status))}</strong></div>
+        </div>
+        <div class="tabs" id="caseTabs">
+          <button class="tab active" data-tab="overview">概要・状態</button><button class="tab" data-tab="documents">必要書類</button>
+          <button class="tab" data-tab="tasks">タスク・期限</button><button class="tab" data-tab="history">履歴・連絡</button>
+        </div>
+        <div id="caseTab-overview" class="tab-panel active">${caseOverviewHtml(d)}</div>
+        <div id="caseTab-documents" class="tab-panel">${caseDocumentsHtml(d)}</div>
+        <div id="caseTab-tasks" class="tab-panel">${caseTasksHtml(d)}</div>
+        <div id="caseTab-history" class="tab-panel">${caseHistoryHtml(d)}</div>`);
+      $$("#caseTabs .tab").forEach(b=>b.addEventListener("click",()=>{$$("#caseTabs .tab").forEach(x=>x.classList.toggle("active",x===b));$$(".tab-panel",$("#modalBody")).forEach(x=>x.classList.toggle("active",x.id===`caseTab-${b.dataset.tab}`));}));
+      bindCaseActions();
+    }
+    function caseOverviewHtml(d){
+      const c=d.case;
+      return `<form id="caseEditForm">
+        <section class="modal-section"><div class="modal-section-head"><h3>案件の基本情報</h3></div><div class="modal-section-body form-grid">
+          <div class="field wide"><label>案件名</label><input id="editCaseTitle" class="input" value="${esc(c.title||"")}"></div>
+          <div class="field"><label>主担当</label><select id="editCaseStaff"><option value="">未設定</option>${staffOptions(c.primary_staff_id)}</select></div>
+          <div class="field"><label>次回対応日</label><input id="editCaseNextDate" class="input" type="date" value="${esc(c.next_action_date||"")}"></div>
+          <div class="field"><label>提出予定日</label><input id="editCaseSubmitDate" class="input" type="date" value="${esc(c.planned_submission_date||"")}"></div>
+          <div class="field"><label>更新期限</label><input id="editCaseRenewalDate" class="input" type="date" value="${esc(c.renewal_due_date||"")}"></div>
+          <div class="field"><label>提出先・行政庁</label><input id="editCaseAuthority" class="input" value="${esc(c.authority_name||"")}"></div>
+          <div class="field"><label>受付番号・整理番号</label><input id="editCaseReference" class="input" value="${esc(c.authority_reference_number||"")}"></div>
+          <div class="field wide"><label>顧客に見せる進捗案内</label><textarea id="editCaseCustomerSummary">${esc(c.customer_visible_summary||"")}</textarea></div>
+          <div class="field wide"><label>内部概要・注意事項</label><textarea id="editCaseInternalSummary">${esc(c.internal_summary||"")}</textarea></div>
+        </div></section>
+        <button class="btn btn-primary" type="submit">案件情報を保存</button>
+      </form>
+      <section class="modal-section" style="margin-top:14px"><div class="modal-section-head"><h3>状態管理</h3></div><div class="modal-section-body">
+        <div class="status-board">
+          ${statusSelectBox("相談","consultation",["new","reviewing","reply_waiting","appointment_scheduled","closed"],c.consultation_status)}
+          ${statusSelectBox("受任","engagement",["not_decided","estimate_preparing","estimate_sent","accepted","declined"],c.engagement_status)}
+          ${statusSelectBox("必要書類","document",["not_started","requested","partially_received","deficient","complete"],c.document_status)}
+          ${statusSelectBox("申請","application",["not_started","preparing","ready_to_submit","submitted","under_review","correction_required","approved","rejected","withdrawn"],c.application_status)}
+          ${statusSelectBox("案件全体","overall",["open","on_hold","completed","cancelled"],c.overall_status)}
+          ${statusSelectBox("更新","renewal",["not_required","future","notice_due","notified","renewal_in_progress","renewed","expired"],c.renewal_status)}
+        </div>
+        <div class="form-grid" style="margin-top:13px">
+          <label class="check-row wide"><input id="caseStatusCustomerVisible" type="checkbox"><span><strong>この変更を顧客マイページへ表示</strong><small>顧客向け文面も入力してください。</small></span></label>
+          <div class="field wide"><label>顧客向け文面</label><textarea id="caseStatusCustomerMessage" placeholder="例：申請書類を提出しました。現在、行政庁での審査中です。"></textarea></div>
+          <div class="field wide"><label>内部メモ</label><textarea id="caseStatusInternalNote"></textarea></div>
+        </div>
+        <div class="toolbar"><button id="saveCaseStatusesButton" class="btn btn-navy" type="button">変更した状態を保存</button></div>
+      </div></section>`;
+    }
+    function statusSelectBox(title,group,list,current){return `<div class="status-box"><label>${esc(title)}</label><select data-status-group="${esc(group)}" data-original="${esc(current||"")}">${options(list,current)}</select></div>`}
+    function caseDocumentsHtml(d){
+      const docs=d.documents||[];
+      return `<section class="modal-section"><div class="modal-section-head"><h3>必要書類一覧</h3><button id="showNewDocumentButton" class="btn btn-outline btn-sm right" type="button">＋ 書類追加</button></div><div class="modal-section-body"><div id="caseDocumentList" class="list">${docs.map(doc=>`
+        <div class="item"><div><h3>${esc(doc.document_name)}</h3><p>${esc(doc.description||"")}${doc.due_date?`・期限 ${esc(fmtDate(doc.due_date))}`:""}</p><div class="item-meta">${badge(doc.status)}${doc.is_required?'<span class="badge warn">必須</span>':'<span class="badge">任意</span>'}${doc.sensitive_level==="prohibited_upload"?'<span class="badge danger">画像保存禁止</span>':""}</div></div><div class="item-actions"><select data-doc-status="${esc(doc.id)}">${options(["not_submitted","submitted","checking","accepted","deficient","replacement_requested","not_applicable"],doc.status)}</select><button class="btn btn-primary btn-sm" data-save-doc="${esc(doc.id)}">保存</button></div></div>`).join("")||empty("必要書類は未登録です")}</div></div></section>
+        <form id="newDocumentForm" class="modal-section hidden"><div class="modal-section-head"><h3>必要書類を追加</h3></div><div class="modal-section-body form-grid">
+          <div class="field wide"><label>書類名</label><input id="newDocName" class="input" required></div>
+          <div class="field wide"><label>説明</label><textarea id="newDocDescription"></textarea></div>
+          <div class="field"><label>提出期限</label><input id="newDocDue" class="input" type="date"></div>
+          <div class="field"><label>機密区分</label><select id="newDocSensitive"><option value="normal">通常</option><option value="confidential">機密</option><option value="restricted">制限</option><option value="prohibited_upload">画像保存禁止</option></select></div>
+          <label class="check-row"><input id="newDocRequired" type="checkbox" checked><span><strong>必須書類</strong></span></label>
+          <label class="check-row"><input id="newDocUpload" type="checkbox"><span><strong>アップロード許可</strong><small>画像保存禁止では自動的に無効</small></span></label>
+          <div class="wide"><button class="btn btn-primary" type="submit">書類を追加</button></div>
+        </div></form>`;
+    }
+    function caseTasksHtml(d){
+      const tasks=d.tasks||[],deadlines=d.deadlines||[];
+      return `<section class="modal-section"><div class="modal-section-head"><h3>タスク</h3><button id="showNewTaskButton" class="btn btn-outline btn-sm right" type="button">＋ タスク追加</button></div><div class="modal-section-body"><div class="list">${tasks.map(taskItem).join("")||empty("タスクはありません")}</div></div></section>
+        <form id="newTaskForm" class="modal-section hidden"><div class="modal-section-head"><h3>タスクを追加</h3></div><div class="modal-section-body form-grid">
+          <div class="field wide"><label>タスク名</label><input id="newTaskTitle" class="input" required></div>
+          <div class="field"><label>種類</label><select id="newTaskType">${options(["reply","document_check","appointment","submission","correction","follow_up","renewal","other"],"other")}</select></div>
+          <div class="field"><label>優先度</label><select id="newTaskPriority">${options(["low","normal","high","urgent"],"normal")}</select></div>
+          <div class="field"><label>期限</label><input id="newTaskDue" class="input" type="datetime-local" step="1800"></div>
+          <div class="field"><label>担当者</label><select id="newTaskStaff"><option value="">未設定</option>${staffOptions("")}</select></div>
+          <div class="field wide"><label>メモ</label><textarea id="newTaskNote"></textarea></div>
+          <div class="wide"><button class="btn btn-primary" type="submit">タスクを追加</button></div>
+        </div></form>
+        <section class="modal-section"><div class="modal-section-head"><h3>期限・更新</h3></div><div class="modal-section-body"><div class="list">${deadlines.map(x=>deadlineItem(x)).join("")||empty("期限は登録されていません")}</div></div></section>`;
+    }
+    function caseHistoryHtml(d){
+      return `<section class="modal-section"><div class="modal-section-head"><h3>状態変更履歴</h3></div><div class="modal-section-body list">${(d.history||[]).map(h=>`<div class="item"><div><h3>${esc(label(h.status_group))}：${esc(label(h.old_status))} → ${esc(label(h.new_status))}</h3><p>${esc(fmtDateTime(h.created_at))}・${esc(rel(h,"gyosei_staff")?.display_name||"システム")}</p>${h.customer_message?`<div class="notice" style="margin-top:8px">${esc(h.customer_message)}</div>`:""}</div></div>`).join("")||empty("変更履歴はありません")}</div></section>
+      <section class="modal-section"><div class="modal-section-head"><h3>顧客向け連絡履歴</h3></div><div class="modal-section-body list">${(d.messages||[]).map(m=>`<div class="item"><div><h3>${esc(m.subject||m.message_type||"連絡")}</h3><p>${esc(fmtDateTime(m.created_at))}</p><div class="pre">${esc(m.body||m.message||"")}</div></div></div>`).join("")||empty("顧客向け連絡履歴はありません")}</div></section>
+      <section class="modal-section"><div class="modal-section-head"><h3>内部メモ</h3></div><div class="modal-section-body list">${(d.notes||[]).map(n=>`<div class="item"><div><h3>${esc(rel(n,"gyosei_staff")?.display_name||"担当者")}</h3><p>${esc(fmtDateTime(n.created_at))}</p><div class="pre">${esc(n.note||n.body||"")}</div></div></div>`).join("")||empty("内部メモはありません")}</div></section>`;
+    }
+    function bindCaseActions(){
+      const d=State.currentCase,c=d.case;
+      const f=$("#caseEditForm");if(f)f.addEventListener("submit",async e=>{e.preventDefault();showLoading(true,"案件情報を保存しています…");try{
+        await DPRO_GYOSEI.apiFetch(`/api/admin/cases/${encodeURIComponent(c.id)}`,{method:"PATCH",admin:true,body:{title:val("editCaseTitle"),primary_staff_id:val("editCaseStaff")||null,next_action_date:val("editCaseNextDate")||null,planned_submission_date:val("editCaseSubmitDate")||null,renewal_due_date:val("editCaseRenewalDate")||null,authority_name:val("editCaseAuthority"),authority_reference_number:val("editCaseReference"),customer_visible_summary:val("editCaseCustomerSummary"),internal_summary:val("editCaseInternalSummary")}});
+        toast("案件情報を保存しました。");await reloadCurrentCase();
+      }catch(e2){toast(e2.message||"保存に失敗しました。",true)}finally{showLoading(false)}});
+      const sb=$("#saveCaseStatusesButton");if(sb)sb.addEventListener("click",saveCaseStatuses);
+      const showDoc=$("#showNewDocumentButton");if(showDoc)showDoc.addEventListener("click",()=>$("#newDocumentForm").classList.toggle("hidden"));
+      const ndf=$("#newDocumentForm");if(ndf)ndf.addEventListener("submit",createDocument);
+      $$("[data-save-doc]").forEach(b=>b.addEventListener("click",()=>saveDocumentStatus(b.dataset.saveDoc)));
+      const showTask=$("#showNewTaskButton");if(showTask)showTask.addEventListener("click",()=>$("#newTaskForm").classList.toggle("hidden"));
+      const ntf=$("#newTaskForm");if(ntf)ntf.addEventListener("submit",createTask);
+      bindDynamic();
+    }
+    async function saveCaseStatuses(){
+      const c=State.currentCase.case,changes=$$("[data-status-group]",$("#modalBody")).filter(s=>s.value!==s.dataset.original);
+      if(!changes.length)return toast("状態は変更されていません。");
+      showLoading(true,"状態を更新しています…");
+      try{
+        for(const s of changes)await DPRO_GYOSEI.apiFetch(`/api/admin/cases/${encodeURIComponent(c.id)}/status`,{method:"POST",admin:true,body:{status_group:s.dataset.statusGroup,new_status:s.value,customer_visible:$("#caseStatusCustomerVisible").checked,customer_message:val("caseStatusCustomerMessage"),internal_note:val("caseStatusInternalNote")}});
+        toast("案件状態を更新しました。");await Promise.all([reloadCurrentCase(),loadCases(false),loadDashboard(false)]);
+      }catch(e){toast(e.message||"状態更新に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function createDocument(e){
+      e.preventDefault();const c=State.currentCase.case;showLoading(true,"必要書類を追加しています…");
+      try{
+        await DPRO_GYOSEI.apiFetch("/api/admin/document-requests",{method:"POST",admin:true,body:{case_id:c.id,document_name:val("newDocName"),description:val("newDocDescription"),due_date:val("newDocDue")||null,sensitive_level:val("newDocSensitive"),is_required:$("#newDocRequired").checked,allow_upload:$("#newDocUpload").checked}});
+        toast("必要書類を追加しました。");await Promise.all([reloadCurrentCase(),loadDocuments(false),loadDashboard(false)]);
+      }catch(err){toast(err.message||"追加に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function saveDocumentStatus(id){
+      const s=$(`[data-doc-status="${CSS.escape(id)}"]`);if(!s)return;showLoading(true,"書類状態を保存しています…");
+      try{await DPRO_GYOSEI.apiFetch(`/api/admin/document-requests/${encodeURIComponent(id)}`,{method:"PATCH",admin:true,body:{status:s.value,checked_at:["accepted","deficient","replacement_requested"].includes(s.value)?new Date().toISOString():null}});toast("書類状態を保存しました。");await Promise.all([reloadCurrentCase(),loadDocuments(false),loadDashboard(false)]);}
+      catch(e){toast(e.message||"保存に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function createTask(e){
+      e.preventDefault();const c=State.currentCase.case;showLoading(true,"タスクを追加しています…");
+      try{await DPRO_GYOSEI.apiFetch("/api/admin/tasks",{method:"POST",admin:true,body:{case_id:c.id,title:val("newTaskTitle"),task_type:val("newTaskType"),priority:val("newTaskPriority"),due_at:fromLocalInput(val("newTaskDue")),assigned_staff_id:val("newTaskStaff")||null,note:val("newTaskNote")}});toast("タスクを追加しました。");await Promise.all([reloadCurrentCase(),loadDashboard(false)]);}
+      catch(err){toast(err.message||"追加に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function completeTask(id){
+      if(!confirm("このタスクを完了にしますか？"))return;showLoading(true,"タスクを完了しています…");
+      try{await DPRO_GYOSEI.apiFetch(`/api/admin/tasks/${encodeURIComponent(id)}`,{method:"PATCH",admin:true,body:{status:"completed"}});toast("タスクを完了しました。");if(State.currentCase)await reloadCurrentCase();await loadDashboard(false);}
+      catch(e){toast(e.message||"更新に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function reloadCurrentCase(){const id=State.currentCase?.case?.id;if(!id)return;const d=await DPRO_GYOSEI.apiFetch(`/api/admin/cases/${encodeURIComponent(id)}`,{admin:true});State.currentCase=d;renderCaseModal();}
+    async function searchClients(){
+      const q=val("clientSearchInput");if(q.length<2)return toast("検索語を2文字以上入力してください。",true);
+      showLoading(true,"顧客を検索しています…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/clients/search",{admin:true,params:{q}});State.clients=d.clients||[];State.corporations=d.corporations||[];setText("clientSearchMeta",d.normalized_phone?`電話番号正規化：${d.normalized_phone}`:`検索結果：顧客 ${State.clients.length}件・法人 ${State.corporations.length}件`);renderClientResults();}
+      catch(e){toast(e.message||"検索に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function loadClients(show=false){
+      if(show)showLoading(true,"顧客一覧を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/clients",{admin:true,params:{limit:100}});State.clients=d.clients||[];State.corporations=[];setText("clientSearchMeta",`最近の顧客 ${State.clients.length}件`);renderClientResults();}
+      catch(e){toast(e.message||"顧客一覧を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderClientResults(){
+      const clientHtml=State.clients.map(c=>`<div class="item"><div><h3>${esc(c.full_name||"顧客")}</h3><p>${esc(c.client_code||"")}・${esc(c.phone||"")}・${esc(c.email||"")}</p><div class="item-meta">${badge(c.line_link_status)}</div></div><div class="item-actions"><button class="btn btn-light btn-sm" data-open-client="${esc(c.id)}">詳細</button></div></div>`).join("");
+      const corpHtml=State.corporations.map(c=>`<div class="item"><div><h3>${esc(c.legal_name||"法人")}</h3><p>${esc(c.corporation_code||"")}・代表 ${esc(c.representative_name||"－")}・${esc(c.phone||"")}</p></div></div>`).join("");
+      $("#clientResults").innerHTML=`<section class="panel"><div class="panel-head"><h2>個人顧客</h2></div><div class="panel-body list">${clientHtml||empty("該当する顧客はありません")}</div></section><section class="panel"><div class="panel-head"><h2>法人</h2></div><div class="panel-body list">${corpHtml||empty("該当する法人はありません")}</div></section>`;
+      bindDynamic();
+    }
+    async function openClient(id){
+      showLoading(true,"顧客詳細を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch(`/api/admin/clients/${encodeURIComponent(id)}`,{admin:true});State.currentClient=d;renderClientModal();}
+      catch(e){toast(e.message||"顧客詳細を取得できませんでした。",true)}finally{showLoading(false)}
+    }
+    function renderClientModal(){
+      const d=State.currentClient,c=d.client;
+      openModal("顧客詳細",`${c.client_code||""}　${c.full_name||""} 様`,`
+        <div class="info-grid">
+          <div class="info-box"><span>氏名</span><strong>${esc(c.full_name||"－")}</strong></div><div class="info-box"><span>電話</span><strong>${esc(c.phone||"－")}</strong></div><div class="info-box"><span>メール</span><strong>${esc(c.email||"－")}</strong></div>
+          <div class="info-box"><span>LINE表示名</span><strong>${esc(c.line_display_name||"－")}</strong></div><div class="info-box"><span>LINE連携状態</span><strong>${esc(label(c.line_link_status))}</strong></div><div class="info-box"><span>最終連絡</span><strong>${esc(fmtDateTime(c.last_contact_at))}</strong></div>
+        </div>
+        <section class="modal-section" style="margin-top:14px"><div class="modal-section-head"><h3>LINE本人連携</h3></div><div class="modal-section-body"><div class="toolbar">
+          <button class="btn btn-primary" data-line-link="approved" type="button">承認</button><button class="btn btn-warn" data-line-link="rejected" type="button">却下</button><button class="btn btn-danger" data-line-link="revoked" type="button">連携解除</button>
+        </div><div class="notice">電話番号だけでは案件情報を公開しません。承認後に、このLINEユーザーIDからマイページを表示します。</div></div></section>
+        <section class="modal-section"><div class="modal-section-head"><h3>案件</h3></div><div class="modal-section-body list">${(d.cases||[]).map(x=>`<div class="item"><div><h3>${esc(x.title)}</h3><p>${esc(x.case_code||"")}</p><div class="item-meta">${badge(x.overall_status)}${badge(x.application_status)}</div></div><button class="btn btn-light btn-sm" data-open-case="${esc(x.id)}">詳細</button></div>`).join("")||empty("案件はありません")}</div></section>
+        <section class="modal-section"><div class="modal-section-head"><h3>面談・相談履歴</h3></div><div class="modal-section-body two-col"><div class="list">${(d.appointments||[]).map(a=>`<div class="item"><div><h3>${esc(fmtDateTime(a.starts_at))}</h3><p>${esc(label(a.appointment_type))}</p>${badge(a.status)}</div></div>`).join("")||empty("面談履歴なし")}</div><div class="list">${(d.inquiries||[]).map(i=>inquiryItem(i)).join("")||empty("相談履歴なし")}</div></div></section>`);
+      $$("[data-line-link]").forEach(b=>b.addEventListener("click",()=>updateLineLink(c.id,b.dataset.lineLink)));
+      bindDynamic();
+    }
+    async function updateLineLink(id,status){
+      if(!confirm(`LINE本人連携を「${label(status)}」に変更しますか？`))return;showLoading(true,"LINE連携状態を更新しています…");
+      try{await DPRO_GYOSEI.apiFetch(`/api/admin/clients/${encodeURIComponent(id)}/line-link`,{method:"PATCH",admin:true,body:{status}});toast("LINE連携状態を更新しました。");const d=await DPRO_GYOSEI.apiFetch(`/api/admin/clients/${encodeURIComponent(id)}`,{admin:true});State.currentClient=d;renderClientModal();await loadClients(false);}
+      catch(e){toast(e.message||"更新に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function loadDocuments(show=false){
+      if(show)showLoading(true,"必要書類を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/document-requests",{admin:true});State.documents=d.document_requests||[];renderDocuments();updateNavCounts();}
+      catch(e){toast(e.message||"必要書類を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderDocuments(){
+      const q=val("documentSearch").toLowerCase(),st=val("documentStatusFilter"),rows=State.documents.filter(x=>{
+        const c=rel(x,"gyosei_cases");return(!q||[x.document_name,x.description,c?.case_code,c?.title].join(" ").toLowerCase().includes(q))&&(!st||x.status===st);
+      });
+      $("#documentsTable").innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>書類</th><th>案件</th><th>提出期限</th><th>状態</th><th>担当</th><th>更新</th></tr></thead><tbody>${rows.map(x=>{
+        const c=rel(x,"gyosei_cases"),s=rel(x,"gyosei_staff");
+        return `<tr><td><span class="cell-title">${esc(x.document_name)}</span><span class="cell-sub">${esc(x.description||"")}</span></td><td>${esc(c?.title||"－")}<span class="cell-sub">${esc(c?.case_code||"")}</span></td><td>${esc(x.due_date?fmtDate(x.due_date):"未設定")}</td><td><select data-global-doc-status="${esc(x.id)}">${options(["not_submitted","submitted","checking","accepted","deficient","replacement_requested","not_applicable"],x.status)}</select></td><td>${esc(s?.display_name||"未設定")}</td><td><button class="btn btn-primary btn-sm" data-save-global-doc="${esc(x.id)}">保存</button>${x.case_id?` <button class="btn btn-light btn-sm" data-open-case="${esc(x.case_id)}">案件</button>`:""}</td></tr>`;
+      }).join("")}</tbody></table></div>`:empty("該当する必要書類はありません");
+      $$("[data-save-global-doc]").forEach(b=>b.addEventListener("click",()=>saveGlobalDocument(b.dataset.saveGlobalDoc)));bindDynamic();
+    }
+    async function saveGlobalDocument(id){
+      const s=$(`[data-global-doc-status="${CSS.escape(id)}"]`);if(!s)return;showLoading(true,"書類状態を保存しています…");
+      try{await DPRO_GYOSEI.apiFetch(`/api/admin/document-requests/${encodeURIComponent(id)}`,{method:"PATCH",admin:true,body:{status:s.value,checked_at:["accepted","deficient","replacement_requested"].includes(s.value)?new Date().toISOString():null}});toast("書類状態を保存しました。");await Promise.all([loadDocuments(false),loadDashboard(false)]);}
+      catch(e){toast(e.message||"保存に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function loadDeadlines(show=false){
+      if(show)showLoading(true,"期限一覧を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/deadlines",{admin:true});State.deadlines=d.deadlines||[];renderDeadlines();updateNavCounts();}
+      catch(e){toast(e.message||"期限一覧を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderDeadlines(){
+      const q=val("deadlineSearch").toLowerCase(),range=val("deadlineRangeFilter"),rows=State.deadlines.filter(x=>{
+        const c=rel(x,"gyosei_cases"),n=daysUntil(x.due_date);let rangeOk=true;
+        if(range==="overdue")rangeOk=n<0;else if(range!=="all")rangeOk=n!==null&&n>=0&&n<=Number(range);
+        return rangeOk&&(!q||[x.title,x.deadline_type,c?.case_code,c?.title].join(" ").toLowerCase().includes(q));
+      });
+      $("#deadlinesTable").innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>期限</th><th>案件</th><th>期日</th><th>残日数</th><th>担当</th><th></th></tr></thead><tbody>${rows.map(x=>{
+        const c=rel(x,"gyosei_cases"),s=rel(x,"gyosei_staff"),n=daysUntil(x.due_date),txt=n<0?`${Math.abs(n)}日超過`:n===0?"本日":`あと${n}日`;
+        return `<tr><td><span class="cell-title">${esc(x.title||"期限")}</span><span class="cell-sub">${esc(x.deadline_type||"")}</span></td><td>${esc(c?.title||"－")}<span class="cell-sub">${esc(c?.case_code||"")}</span></td><td>${esc(fmtDate(x.due_date))}</td><td><span class="badge ${n<0?"danger":n<=7?"warn":"teal"}">${esc(txt)}</span></td><td>${esc(s?.display_name||"未設定")}</td><td>${x.case_id?`<button class="btn btn-light btn-sm" data-open-case="${esc(x.case_id)}">案件</button>`:""}</td></tr>`;
+      }).join("")}</tbody></table></div>`:empty("該当する期限はありません");
+      bindDynamic();
+    }
+    async function loadTemplates(show=false){
+      if(show)showLoading(true,"LINE文面を読み込んでいます…");
+      try{const d=await DPRO_GYOSEI.apiFetch("/api/admin/message-templates",{admin:true});State.templates=d.message_templates||[];renderTemplates();}
+      catch(e){toast(e.message||"LINE文面を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderTemplates(){
+      $("#messageTemplates").innerHTML=State.templates.map(t=>`<div class="copy-box"><h3>${esc(t.template_name||t.title||"定型文")}</h3><p>${esc(t.body||t.message_body||t.content||"")}</p><div class="copy-actions"><button class="btn btn-primary btn-sm" data-copy-template="${esc(t.id)}">文面をコピー</button></div></div>`).join("")||empty("LINE文面テンプレートは未登録です");
+      $$("[data-copy-template]").forEach(b=>b.addEventListener("click",()=>copyTemplate(b.dataset.copyTemplate)));
+    }
+    async function copyTemplate(id){
+      const t=State.templates.find(x=>String(x.id)===String(id));const text=t?.body||t?.message_body||t?.content||"";if(!text)return;
+      try{await navigator.clipboard.writeText(text);toast("LINE文面をコピーしました。");}catch{fallbackCopy(text);toast("LINE文面をコピーしました。");}
+    }
+    function fallbackCopy(text){const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
+    async function loadSettings(show=false){
+      if(show)showLoading(true,"事務所設定を読み込んでいます…");
+      try{
+        const [settings,staff]=await Promise.all([DPRO_GYOSEI.apiFetch("/api/admin/settings",{admin:true}),DPRO_GYOSEI.apiFetch("/api/admin/staff",{admin:true})]);
+        State.settings=settings;State.staff=staff.staff||[];renderSettings();
+      }catch(e){toast(e.message||"事務所設定を取得できませんでした。",true)}finally{if(show)showLoading(false)}
+    }
+    function renderSettings(){
+      const d=State.settings||{},o=d.office||{};
+      setVal("settingOfficeName",o.office_name);setVal("settingSubtitle",o.subtitle);setVal("settingPostalCode",o.postal_code);setVal("settingAddress",o.address);
+      setVal("settingPhone",o.phone);setVal("settingEmail",o.email);setVal("settingWebsite",o.website_url);setVal("settingMonths",o.booking_months_ahead||3);
+      $("#settingLineApproval").checked=Boolean(o.line_link_approval_required);$("#settingActive").checked=o.is_active!==false;
+      setText("sidebarOfficeName",o.office_name||DPRO_GYOSEI.config.OFFICE_NAME);document.title=`${o.office_name||DPRO_GYOSEI.config.OFFICE_NAME}｜事務所管理`;
+      $("#staffList").innerHTML=State.staff.map(s=>`<div class="item"><div><h3>${esc(s.display_name)}</h3><p>${esc(s.staff_code||"")}・${esc(label(s.role))}</p><div class="item-meta">${s.can_accept_appointments?'<span class="badge ok">面談対応可</span>':'<span class="badge">面談対象外</span>'}${s.is_active?'<span class="badge teal">有効</span>':'<span class="badge danger">停止</span>'}</div></div></div>`).join("")||empty("スタッフ未登録");
+      const days=["日","月","火","水","木","金","土"];
+      $("#businessHoursList").innerHTML=(d.business_hours||[]).map(h=>`<div class="item"><div><h3>${days[Number(h.weekday)]||h.weekday}曜日</h3><p>${h.is_open?`${String(h.open_time||"").slice(0,5)}〜${String(h.close_time||"").slice(0,5)}`:"休業"}</p></div>${h.is_open?'<span class="badge ok">営業</span>':'<span class="badge">休業</span>'}</div>`).join("")||empty("営業時間未登録");
+      $("#categorySettingsList").innerHTML=(d.categories||[]).map(c=>`<div class="item"><div><h3>${esc(c.category_name)}</h3><p>${esc(c.description||"")}</p></div>${c.is_public!==false?'<span class="badge ok">公開</span>':'<span class="badge">非公開</span>'}</div>`).join("")||empty("相談分野未登録");
+    }
+    async function saveSettings(e){
+      e.preventDefault();showLoading(true,"事務所設定を保存しています…");
+      try{
+        const d=await DPRO_GYOSEI.apiFetch("/api/admin/settings",{method:"PATCH",admin:true,body:{office_name:val("settingOfficeName"),subtitle:val("settingSubtitle"),postal_code:val("settingPostalCode"),address:val("settingAddress"),phone:val("settingPhone"),email:val("settingEmail"),website_url:val("settingWebsite"),booking_months_ahead:Number(val("settingMonths")||3),line_link_approval_required:$("#settingLineApproval").checked,is_active:$("#settingActive").checked}});
+        toast("事務所設定を保存しました。");await loadSettings(false);
+      }catch(err){toast(err.message||"保存に失敗しました。",true)}finally{showLoading(false)}
+    }
+    async function systemCheck(){
+      showLoading(true,"system-checkを実行しています…");
+      try{
+        const d=await DPRO_GYOSEI.apiFetch("/api/admin/system-check",{admin:true}),db=d.database||{},counts=db.counts||{};
+        $("#systemCheckResult").className="notice";$("#systemCheckResult").innerHTML=`<strong>正常</strong><br>Worker：${esc(d.version||"－")}<br>DB：${esc(db.version||"－")}<br>顧客 ${esc(counts.clients||0)}件／案件 ${esc(counts.open_cases||0)}件／書類 ${esc(counts.document_requests||0)}件／タスク ${esc(counts.open_tasks||0)}件`;
+        toast("system-checkは正常です。");
+      }catch(e){$("#systemCheckResult").className="notice danger";$("#systemCheckResult").textContent=e.message||"system-checkに失敗しました。";toast(e.message||"system-checkに失敗しました。",true)}
+      finally{showLoading(false)}
+    }
+    async function demoPrepare(){
+      if(!confirm("現在のデモデータを再準備します。デモ環境でのみ実行してください。続けますか？"))return;
+      showLoading(true,"デモデータを再準備しています…");
+      try{await DPRO_GYOSEI.apiFetch("/api/admin/demo-prepare",{method:"POST",admin:true,body:{}});toast("デモデータを再準備しました。");await loadAll(false);}
+      catch(e){toast(e.message||"デモ準備に失敗しました。",true)}finally{showLoading(false)}
+    }
+    function updateNavCounts(){
+      const d=State.dashboard||{},s=d.summary||{};
+      setText("navTodayCount",(s.open_tasks||0)+(s.documents_to_check||0));setText("navInquiryCount",s.new_inquiries||0);setText("navAppointmentCount",s.today_appointments||0);
+      setText("navCaseCount",s.open_cases||State.cases.length||0);setText("navDocumentCount",s.documents_to_check||0);setText("navDeadlineCount",s.upcoming_deadlines||State.deadlines.length||0);
+    }
+    function bindDynamic(){
+      $$("[data-open-inquiry]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",e=>{e.stopPropagation();openInquiry(b.dataset.openInquiry);});}});
+      $$("[data-open-appointment]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",e=>{e.stopPropagation();openAppointment(b.dataset.openAppointment);});}});
+      $$("[data-open-case]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",e=>{e.stopPropagation();openCase(b.dataset.openCase);});}});
+      $$("[data-open-client]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",e=>{e.stopPropagation();openClient(b.dataset.openClient);});}});
+      $$("[data-complete-task]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",e=>{e.stopPropagation();completeTask(b.dataset.completeTask);});}});
+      $$("[data-jump]").forEach(b=>{if(!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",()=>showView(b.dataset.jump));}});
+    }
+    function options(list,current){return list.map(v=>`<option value="${esc(v)}" ${String(v)===String(current)?"selected":""}>${esc(label(v))}</option>`).join("")}
+    function staffOptions(current){return State.staff.filter(s=>s.is_active!==false).map(s=>`<option value="${esc(s.id)}" ${String(s.id)===String(current)?"selected":""}>${esc(s.display_name)}</option>`).join("")}
+    function toLocalInput(v){if(!v)return "";const d=new Date(v);if(!Number.isFinite(d.getTime()))return String(v).slice(0,16);const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(d);const m={};parts.forEach(p=>m[p.type]=p.value);return `${m.year}-${m.month}-${m.day}T${m.hour}:${m.minute}`}
+    function fromLocalInput(v){if(!v)return null;const d=new Date(v+":00+09:00");return Number.isFinite(d.getTime())?d.toISOString():null}
+    function openModal(title,sub,body,small=false){setText("modalTitle",title);setText("modalSubtitle",sub||"");$("#modalBody").innerHTML=body;$("#modal").classList.toggle("small",small);$("#modalBackdrop").classList.remove("hidden");document.body.style.overflow="hidden";}
+    function closeModal(){$("#modalBackdrop").classList.add("hidden");$("#modalBody").innerHTML="";document.body.style.overflow="";State.currentCase=null;State.currentClient=null;}
+    function showLoading(show,text="読み込み中…"){$("#loading").classList.toggle("hidden",!show);setText("loadingText",text)}
+    let toastTimer=null;
+    function toast(message,error=false){const t=$("#toast");t.textContent=message;t.className=`toast${error?" error":""}`;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),3500);}
+  })();
+  </script>
+</body>
+</html>
