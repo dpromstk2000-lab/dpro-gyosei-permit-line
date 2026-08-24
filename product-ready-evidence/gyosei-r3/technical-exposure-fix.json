@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "checkedAt": "2026-08-24T04:11:04.906Z",
+  "sourcePatchHead": "0e510b1d39d98c3a271d670acea41927814d0570",
+  "removedPhrase": "Service Role Key",
+  "freshChromiumSixScreen": true,
+  "sixScreenPass": true
+}

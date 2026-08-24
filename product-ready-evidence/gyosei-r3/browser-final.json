@@ -1,13 +1,14 @@
 {
-  "ok": false,
-  "checkedAt": "2026-08-24T02:31:09.939Z",
-  "sourcePatchHead": "4a4845ea5390b3d9fe6229e5ee656e9abf992a8b",
+  "ok": true,
+  "checkedAt": "2026-08-24T04:11:04.906Z",
+  "sourcePatchHead": "0e510b1d39d98c3a271d670acea41927814d0570",
   "frontendVersion": "GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824",
   "adapterVersion": "GYOSEI-R2-ADAPTER-PRODUCT-READY-20260824",
   "databaseVersion": "GYOSEI-R2-DB-PRODUCT-READY-20260824",
   "total": 6,
-  "passed": 5,
-  "failed": 1,
+  "passed": 6,
+  "failed": 0,
+  "evidenceMode": "fresh Chromium full six-screen post-fix",
   "results": [
     {
       "key": "pc1440-public",
@@ -22,9 +23,17 @@
       "documentScrollWidth": 1440,
       "bodyScrollWidth": 1440,
       "pageErrors": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
       "blockingConsoleErrors": [],
-      "httpErrors": [],
+      "httpErrors": [
+        {
+          "status": 404,
+          "url": "https://dpromstk2000-lab.github.io/favicon.ico",
+          "resourceType": "other"
+        }
+      ],
       "criticalResourceErrors": [],
       "technicalExposure": false,
       "ok": true
@@ -126,8 +135,8 @@
       "blockingConsoleErrors": [],
       "httpErrors": [],
       "criticalResourceErrors": [],
-      "technicalExposure": true,
-      "ok": false
+      "technicalExposure": false,
+      "ok": true
     }
   ]
 }
