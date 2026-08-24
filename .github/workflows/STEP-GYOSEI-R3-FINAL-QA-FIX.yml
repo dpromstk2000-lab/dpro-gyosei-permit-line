@@ -1,0 +1,300 @@
+name: DPRO GYOSEI R3 Final QA Fix
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/STEP-GYOSEI-R3-FINAL-QA-FIX.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gyosei-r3-final-qa-fix
+  cancel-in-progress: true
+
+jobs:
+  gyosei-r3-final-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify patched source
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'APIキーや機密認証情報、顧客の機密情報は表示しません。' system-check.html
+          ! grep -Fq 'Service Role Key' system-check.html
+          grep -Fq 'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824' config.js
+          grep -Fq 'duration_minutes:30' index.html
+          echo "SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Verify public patch and health
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in $(seq 1 18); do
+            curl -fsSL "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/system-check.html?demo=1&r=${SOURCE_HEAD}-${i}" \
+              -o /tmp/system-check-public.html || true
+            if grep -Fq 'APIキーや機密認証情報、顧客の機密情報は表示しません。' /tmp/system-check-public.html \
+              && ! grep -Fq 'Service Role Key' /tmp/system-check-public.html; then
+              ok=1
+              break
+            fi
+            sleep 10
+          done
+          test "$ok" = "1"
+
+          curl -fsSL \
+            'https://cbknucemarcpbscirzyv.supabase.co/functions/v1/dpro-gyosei-product-ready-gateway/api/health' \
+            -o /tmp/health.json
+
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/health.json',encoding='utf-8'))
+          assert d.get('ok') is True
+          assert d.get('versions',{}).get('aligned') is True
+          assert d.get('versions',{}).get('database') == 'GYOSEI-R2-DB-PRODUCT-READY-20260824'
+          assert d.get('versions',{}).get('frontend') == 'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824'
+          assert d.get('adapterVersion') == 'GYOSEI-R2-ADAPTER-PRODUCT-READY-20260824'
+          assert d.get('line',{}).get('verifiedSubAuthoritative') is True
+          assert d.get('line',{}).get('clientSuppliedLineUserIdAuthoritative') is False
+          assert d.get('line',{}).get('selfTest',{}).get('pass') is True
+          assert d.get('booking',{}).get('slotMinutes') == 30
+          assert d.get('booking',{}).get('pastServerGuard') is True
+          assert d.get('booking',{}).get('businessCalendarServerGuard') is True
+          print('HEALTH=PASS')
+          PY
+
+      - name: Prepare Chromium driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v google-chrome >/dev/null 2>&1; then
+            google-chrome --version
+          elif command -v google-chrome-stable >/dev/null 2>&1; then
+            google-chrome-stable --version
+          else
+            echo "Preinstalled Chrome not found"
+            exit 2
+          fi
+          mkdir -p /tmp/gyosei-r3-final
+          cd /tmp/gyosei-r3-final
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund puppeteer-core@24.16.0
+
+      - name: Fresh Chromium six-screen matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p product-ready-evidence/gyosei-r3/screenshots
+
+          cat > /tmp/gyosei-r3-final/qa.mjs <<'EOF'
+          import puppeteer from 'puppeteer-core';
+          import fs from 'fs';
+          import { execSync } from 'child_process';
+
+          const chromeCandidates=['google-chrome','google-chrome-stable'];
+          let executablePath='';
+          for(const c of chromeCandidates){
+            try{
+              const p=execSync(`command -v ${c}`,{encoding:'utf8'}).trim();
+              if(p){ executablePath=p; break; }
+            }catch{}
+          }
+          if(!executablePath) throw new Error('chrome executable not found');
+
+          const BASE='https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/';
+          const cases=[
+            {key:'pc1440-public',file:'index.html?demo=1',width:1440,height:1000},
+            {key:'mobile390-public',file:'index.html?demo=1',width:390,height:844},
+            {key:'mobile320-member',file:'member.html?demo=1',width:320,height:720},
+            {key:'ipad1024-owner',file:'owner-ipad.html?demo=1',width:1024,height:768},
+            {key:'pc1440-owner',file:'owner.html?demo=1',width:1440,height:1000},
+            {key:'pc1440-system-check',file:'system-check.html?demo=1',width:1440,height:1000}
+          ];
+
+          const blocking=/(ReferenceError|TypeError|SyntaxError|Uncaught|is not defined|Cannot read (properties|property)|Failed to execute)/i;
+          const technical=/(SUPABASE_SERVICE_ROLE_KEY|service[_ -]?role[_ -]?key|channel[_ -]?secret|stack trace|ReferenceError:|TypeError:|SyntaxError:)/i;
+
+          const browser=await puppeteer.launch({
+            headless:true,
+            executablePath,
+            args:['--no-sandbox','--disable-dev-shm-usage']
+          });
+
+          const results=[];
+          let failed=false;
+
+          for(const c of cases){
+            const page=await browser.newPage();
+            await page.setViewport({width:c.width,height:c.height,deviceScaleFactor:1});
+
+            const pageErrors=[];
+            const consoleErrors=[];
+            const httpErrors=[];
+
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('console',m=>{
+              if(m.type()==='error') consoleErrors.push(m.text());
+            });
+            page.on('response',r=>{
+              if(r.status()>=400){
+                httpErrors.push({
+                  status:r.status(),
+                  url:r.url(),
+                  resourceType:r.request().resourceType()
+                });
+              }
+            });
+
+            let httpStatus=0;
+            let navigationError='';
+            try{
+              const sep=c.file.includes('?')?'&':'?';
+              const resp=await page.goto(
+                BASE+c.file+sep+'qa='+Date.now(),
+                {waitUntil:'domcontentloaded',timeout:60000}
+              );
+              httpStatus=resp?.status()||0;
+              await new Promise(r=>setTimeout(r,3500));
+            }catch(e){
+              navigationError=String(e);
+            }
+
+            let metrics={
+              overflow:true,
+              innerWidth:0,
+              documentScrollWidth:0,
+              bodyScrollWidth:0,
+              text:''
+            };
+
+            if(!navigationError){
+              metrics=await page.evaluate(()=>({
+                innerWidth:window.innerWidth,
+                documentScrollWidth:document.documentElement.scrollWidth,
+                bodyScrollWidth:document.body.scrollWidth,
+                overflow:Math.max(
+                  document.documentElement.scrollWidth,
+                  document.body.scrollWidth
+                )>window.innerWidth+1,
+                text:(document.body.innerText||'').slice(0,250000)
+              }));
+            }
+
+            const blockingConsoleErrors=consoleErrors.filter(x=>blocking.test(x));
+            const criticalResourceErrors=httpErrors.filter(
+              x=>['document','script','stylesheet'].includes(x.resourceType)
+            );
+            const technicalExposure=technical.test(metrics.text);
+
+            const rec={
+              ...c,
+              url:BASE+c.file,
+              httpStatus,
+              navigationError,
+              overflow:metrics.overflow,
+              innerWidth:metrics.innerWidth,
+              documentScrollWidth:metrics.documentScrollWidth,
+              bodyScrollWidth:metrics.bodyScrollWidth,
+              pageErrors,
+              consoleErrors,
+              blockingConsoleErrors,
+              httpErrors,
+              criticalResourceErrors,
+              technicalExposure
+            };
+
+            rec.ok=
+              !navigationError &&
+              httpStatus===200 &&
+              !rec.overflow &&
+              pageErrors.length===0 &&
+              blockingConsoleErrors.length===0 &&
+              criticalResourceErrors.length===0 &&
+              !technicalExposure;
+
+            if(!rec.ok) failed=true;
+            results.push(rec);
+
+            if(!navigationError){
+              await page.screenshot({
+                path:`product-ready-evidence/gyosei-r3/screenshots/${c.key}-final.png`,
+                fullPage:true
+              });
+            }
+            await page.close();
+          }
+
+          await browser.close();
+
+          const summary={
+            ok:!failed,
+            checkedAt:new Date().toISOString(),
+            sourcePatchHead:process.env.SOURCE_HEAD||null,
+            frontendVersion:'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824',
+            adapterVersion:'GYOSEI-R2-ADAPTER-PRODUCT-READY-20260824',
+            databaseVersion:'GYOSEI-R2-DB-PRODUCT-READY-20260824',
+            total:results.length,
+            passed:results.filter(x=>x.ok).length,
+            failed:results.filter(x=>!x.ok).length,
+            evidenceMode:'fresh Chromium full six-screen post-fix',
+            results
+          };
+
+          fs.writeFileSync(
+            'product-ready-evidence/gyosei-r3/browser-final.json',
+            JSON.stringify(summary,null,2)+'\n'
+          );
+
+          fs.writeFileSync(
+            'product-ready-evidence/gyosei-r3/technical-exposure-fix.json',
+            JSON.stringify({
+              ok:summary.ok,
+              checkedAt:summary.checkedAt,
+              sourcePatchHead:summary.sourcePatchHead,
+              removedPhrase:'Service Role Key',
+              freshChromiumSixScreen:true,
+              sixScreenPass:summary.passed===6 && summary.failed===0
+            },null,2)+'\n'
+          );
+
+          fs.copyFileSync(
+            '/tmp/health.json',
+            'product-ready-evidence/gyosei-r3/health-final.json'
+          );
+
+          console.log(JSON.stringify({
+            ok:summary.ok,
+            total:summary.total,
+            passed:summary.passed,
+            failed:summary.failed
+          },null,2));
+
+          if(!summary.ok || summary.total!==6 || summary.passed!==6 || summary.failed!==0){
+            process.exit(2);
+          }
+          EOF
+
+          SOURCE_HEAD="$SOURCE_HEAD" node /tmp/gyosei-r3-final/qa.mjs
+
+      - name: Publish final evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'dpro-product-ready-bot'
+          git config user.email 'actions@users.noreply.github.com'
+
+          git add product-ready-evidence/gyosei-r3
+          git commit -m 'Publish GYOSEI R3 final 6-of-6 evidence'
+
+          # Rebase only AFTER the evidence commit exists, so the worktree is clean.
+          git pull --rebase origin main
+          git push origin HEAD:main
