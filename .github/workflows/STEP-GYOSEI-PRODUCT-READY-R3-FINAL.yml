@@ -1,0 +1,272 @@
+name: DPRO GYOSEI Product Ready R3 Final Gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/STEP-GYOSEI-PRODUCT-READY-R3-FINAL.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  gyosei-r3-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify current source
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "CURRENT_HEAD=$(git rev-parse HEAD)"
+          echo "R1_SOURCE_LOCK=9c0f46f0675e38d722dc29df85da79546218564e"
+          test -f config.js
+          test -f index.html
+          test -f member.html
+          test -f owner.html
+          test -f owner-ipad.html
+          test -f system-check.html
+          grep -F 'GYOSEI-4-CONFIG-PUBLIC-BASE-20260716' config.js || grep -F 'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824' config.js
+
+      - name: Apply authoritative R2 frontend
+        shell: python
+        run: |
+          import base64
+          from pathlib import Path
+
+          Path("config.js").write_bytes(base64.b64decode("LyoqCiAqIERQUk8g6KGM5pS/5pu45aOr44O76Kix6KqN5Y+v55Sz6KuLIExJTkUKICogUFJPRFVDVCBSRUFEWSBSMiBwcm90ZWN0ZWQgZnJvbnRlbmQgYmluZGluZwogKiBWZXJzaW9uOiBHWU9TRUktUjItRlJPTlRFTkQtUFJPRFVDVC1SRUFEWS0yMDI2MDgyNAogKi8KKGZ1bmN0aW9uIChnbG9iYWwpIHsKICAidXNlIHN0cmljdCI7CgogIGNvbnN0IENPTkZJRyA9IE9iamVjdC5mcmVlemUoewogICAgU0VSVklDRV9OQU1FOiAiRFBSTyDooYzmlL/mm7jlo6vjg7voqLHoqo3lj6/nlLPoq4sgTElORSIsCiAgICBPRkZJQ0VfTkFNRTogIkRQUk/ooYzmlL/mm7jlo6vkuovli5nmiYAiLAogICAgT0ZGSUNFX0NPREU6ICJkcHJvX2d5b3NlaV9kZW1vIiwKICAgIEFQSV9CQVNFOiAiaHR0cHM6Ly9jYmtudWNlbWFyY3Bic2Npcnp5di5zdXBhYmFzZS5jby9mdW5jdGlvbnMvdjEvZHByby1neW9zZWktcHJvZHVjdC1yZWFkeS1nYXRld2F5IiwKICAgIFRJTUVaT05FOiAiQXNpYS9Ub2t5byIsCiAgICBERUZBVUxUX1NMT1RfTUlOVVRFUzogMzAsCiAgICBWRVJTSU9OOiAiR1lPU0VJLVIyLUZST05URU5ELVBST0RVQ1QtUkVBRFktMjAyNjA4MjQiLAogICAgSVNfREVNTzogdHJ1ZSwKICAgIENPTE9SUzogT2JqZWN0LmZyZWV6ZSh7CiAgICAgIHByaW1hcnk6ICIjMTczMjREIiwKICAgICAgc2Vjb25kYXJ5OiAiIzI0N0I3OCIsCiAgICAgIGJhY2tncm91bmQ6ICIjRjdGOEY1IiwKICAgICAgY2FyZDogIiNGRkZGRkYiLAogICAgICBzdWNjZXNzOiAiIzJGODU1QSIsCiAgICAgIHdhcm5pbmc6ICIjQzI2QTEyIiwKICAgICAgZGFuZ2VyOiAiI0I0MjMxOCIsCiAgICAgIHRleHQ6ICIjMTcyMTJCIiwKICAgICAgbXV0ZWQ6ICIjNjE3MTgwIiwKICAgICAgYm9yZGVyOiAiI0Q5RTFFNSIsCiAgICB9KSwKICAgIERFTU86IE9iamVjdC5mcmVlemUoewogICAgICBsaW5lVXNlcklkOiAiZGVtb19neW9zZWlfbGluZV8wMDEiLAogICAgICBtZW1iZXJQaG9uZTogIjA5MC0xMTExLTIzMDEiLAogICAgICBtZW1iZXJOYW1lOiAi5bGx55SwIOS4gOmDjiIsCiAgICB9KSwKICB9KTsKCiAgY29uc3QgQURNSU5fU0VTU0lPTl9LRVkgPSAiZHByb19neW9zZWlfYWRtaW5fY29kZSI7CiAgY29uc3QgTElORV9JRF9UT0tFTl9TRVNTSU9OX0tFWSA9ICJkcHJvX2d5b3NlaV9saW5lX2lkX3Rva2VuIjsKCiAgZnVuY3Rpb24gbm9ybWFsaXplUGF0aChwYXRoKSB7CiAgICBjb25zdCBwID0gU3RyaW5nKHBhdGggfHwgIiIpLnRyaW0oKTsKICAgIGlmICghcCkgcmV0dXJuICIiOwogICAgcmV0dXJuIHAuc3RhcnRzV2l0aCgiLyIpID8gcCA6ICIvIiArIHA7CiAgfQoKICBmdW5jdGlvbiBidWlsZFVybChwYXRoLCBwYXJhbXMpIHsKICAgIGNvbnN0IHVybCA9IG5ldyBVUkwoQ09ORklHLkFQSV9CQVNFICsgbm9ybWFsaXplUGF0aChwYXRoKSk7CiAgICBjb25zdCB2YWx1ZXMgPSBwYXJhbXMgfHwge307CiAgICBPYmplY3Qua2V5cyh2YWx1ZXMpLmZvckVhY2goZnVuY3Rpb24gKGtleSkgewogICAgICBjb25zdCB2YWx1ZSA9IHZhbHVlc1trZXldOwogICAgICBpZiAodmFsdWUgIT09IHVuZGVmaW5lZCAmJiB2YWx1ZSAhPT0gbnVsbCAmJiB2YWx1ZSAhPT0gIiIpIHsKICAgICAgICB1cmwuc2VhcmNoUGFyYW1zLnNldChrZXksIFN0cmluZyh2YWx1ZSkpOwogICAgICB9CiAgICB9KTsKICAgIHJldHVybiB1cmwudG9TdHJpbmcoKTsKICB9CgogIGZ1bmN0aW9uIGdldEFkbWluQ29kZSgpIHsKICAgIHRyeSB7CiAgICAgIHJldHVybiBnbG9iYWwuc2Vzc2lvblN0b3JhZ2UuZ2V0SXRlbShBRE1JTl9TRVNTSU9OX0tFWSkgfHwgIiI7CiAgICB9IGNhdGNoIChfKSB7CiAgICAgIHJldHVybiAiIjsKICAgIH0KICB9CgogIGZ1bmN0aW9uIHNldEFkbWluQ29kZSh2YWx1ZSkgewogICAgY29uc3QgY29kZSA9IFN0cmluZyh2YWx1ZSB8fCAiIikudHJpbSgpOwogICAgdHJ5IHsKICAgICAgaWYgKGNvZGUpIGdsb2JhbC5zZXNzaW9uU3RvcmFnZS5zZXRJdGVtKEFETUlOX1NFU1NJT05fS0VZLCBjb2RlKTsKICAgICAgZWxzZSBnbG9iYWwuc2Vzc2lvblN0b3JhZ2UucmVtb3ZlSXRlbShBRE1JTl9TRVNTSU9OX0tFWSk7CiAgICB9IGNhdGNoIChfKSB7fQogICAgcmV0dXJuIGNvZGU7CiAgfQoKICBmdW5jdGlvbiBjbGVhckFkbWluQ29kZSgpIHsKICAgIHNldEFkbWluQ29kZSgiIik7CiAgfQoKICBmdW5jdGlvbiBnZXRMaW5lSWRUb2tlbigpIHsKICAgIHRyeSB7CiAgICAgIHJldHVybiBnbG9iYWwuc2Vzc2lvblN0b3JhZ2UuZ2V0SXRlbShMSU5FX0lEX1RPS0VOX1NFU1NJT05fS0VZKSB8fCAiIjsKICAgIH0gY2F0Y2ggKF8pIHsKICAgICAgcmV0dXJuICIiOwogICAgfQogIH0KCiAgZnVuY3Rpb24gc2V0TGluZUlkVG9rZW4odmFsdWUpIHsKICAgIGNvbnN0IHRva2VuID0gU3RyaW5nKHZhbHVlIHx8ICIiKS50cmltKCk7CiAgICB0cnkgewogICAgICBpZiAodG9rZW4pIGdsb2JhbC5zZXNzaW9uU3RvcmFnZS5zZXRJdGVtKExJTkVfSURfVE9LRU5fU0VTU0lPTl9LRVksIHRva2VuKTsKICAgICAgZWxzZSBnbG9iYWwuc2Vzc2lvblN0b3JhZ2UucmVtb3ZlSXRlbShMSU5FX0lEX1RPS0VOX1NFU1NJT05fS0VZKTsKICAgIH0gY2F0Y2ggKF8pIHt9CiAgICByZXR1cm4gdG9rZW47CiAgfQoKICBmdW5jdGlvbiBjbGVhckxpbmVJZFRva2VuKCkgewogICAgc2V0TGluZUlkVG9rZW4oIiIpOwogIH0KCiAgZnVuY3Rpb24gaXNFeHBsaWNpdERlbW9QYWdlKCkgewogICAgdHJ5IHsKICAgICAgcmV0dXJuIG5ldyBVUkwoZ2xvYmFsLmxvY2F0aW9uLmhyZWYpLnNlYXJjaFBhcmFtcy5nZXQoImRlbW8iKSA9PT0gIjEiOwogICAgfSBjYXRjaCAoXykgewogICAgICByZXR1cm4gZmFsc2U7CiAgICB9CiAgfQoKICBmdW5jdGlvbiBpc0RlbW9MaW5lVXNlcklkKHZhbHVlKSB7CiAgICByZXR1cm4gL15kZW1vX2d5b3NlaV9saW5lX1xkKyQvLnRlc3QoU3RyaW5nKHZhbHVlIHx8ICIiKSk7CiAgfQoKICBmdW5jdGlvbiBnZXRMaW5lVXNlcklkKGZhbGxiYWNrKSB7CiAgICBpZiAoIUNPTkZJRy5JU19ERU1PIHx8ICFpc0V4cGxpY2l0RGVtb1BhZ2UoKSkgcmV0dXJuICIiOwogICAgY29uc3QgdXJsID0gbmV3IFVSTChnbG9iYWwubG9jYXRpb24uaHJlZik7CiAgICBjb25zdCBjYW5kaWRhdGUgPSB1cmwuc2VhcmNoUGFyYW1zLmdldCgibGluZV91c2VyX2lkIikgfHwgZmFsbGJhY2sgfHwgQ09ORklHLkRFTU8ubGluZVVzZXJJZDsKICAgIHJldHVybiBpc0RlbW9MaW5lVXNlcklkKGNhbmRpZGF0ZSkgPyBjYW5kaWRhdGUgOiBDT05GSUcuREVNTy5saW5lVXNlcklkOwogIH0KCiAgYXN5bmMgZnVuY3Rpb24gYXBpRmV0Y2gocGF0aCwgb3B0aW9ucykgewogICAgY29uc3Qgb3B0cyA9IE9iamVjdC5hc3NpZ24oe30sIG9wdGlvbnMgfHwge30pOwogICAgY29uc3QgcGFyYW1zID0gb3B0cy5wYXJhbXMgfHwgbnVsbDsKICAgIGNvbnN0IGFkbWluID0gQm9vbGVhbihvcHRzLmFkbWluKTsKICAgIGNvbnN0IGxpbmVVc2VySWQgPSBvcHRzLmxpbmVVc2VySWQgfHwgIiI7CiAgICBjb25zdCBsaW5lSWRUb2tlbiA9IG9wdHMubGluZUlkVG9rZW4gfHwgZ2V0TGluZUlkVG9rZW4oKTsKICAgIGRlbGV0ZSBvcHRzLnBhcmFtczsKICAgIGRlbGV0ZSBvcHRzLmFkbWluOwogICAgZGVsZXRlIG9wdHMubGluZVVzZXJJZDsKICAgIGRlbGV0ZSBvcHRzLmxpbmVJZFRva2VuOwoKICAgIGNvbnN0IGhlYWRlcnMgPSBuZXcgSGVhZGVycyhvcHRzLmhlYWRlcnMgfHwge30pOwogICAgaGVhZGVycy5zZXQoIlgtT2ZmaWNlLUNvZGUiLCBDT05GSUcuT0ZGSUNFX0NPREUpOwogICAgaWYgKGFkbWluKSB7CiAgICAgIGNvbnN0IGNvZGUgPSBnZXRBZG1pbkNvZGUoKTsKICAgICAgaWYgKCFjb2RlKSB7CiAgICAgICAgY29uc3QgZXJyb3IgPSBuZXcgRXJyb3IoIueuoeeQhuOCs+ODvOODieOCkuWFpeWKm+OBl+OBpuOBj+OBoOOBleOBhOOAgiIpOwogICAgICAgIGVycm9yLnN0YXR1cyA9IDQwMTsKICAgICAgICBlcnJvci5jb2RlID0gImFkbWluX2NvZGVfcmVxdWlyZWQiOwogICAgICAgIHRocm93IGVycm9yOwogICAgICB9CiAgICAgIGhlYWRlcnMuc2V0KCJYLUFkbWluLUNvZGUiLCBjb2RlKTsKICAgIH0KCiAgICBpZiAobGluZUlkVG9rZW4pIHsKICAgICAgaGVhZGVycy5zZXQoIlgtTGluZS1JZC1Ub2tlbiIsIGxpbmVJZFRva2VuKTsKICAgIH0gZWxzZSBpZiAoQ09ORklHLklTX0RFTU8gJiYgaXNFeHBsaWNpdERlbW9QYWdlKCkgJiYgaXNEZW1vTGluZVVzZXJJZChsaW5lVXNlcklkKSkgewogICAgICBoZWFkZXJzLnNldCgiWC1EZW1vLUxpbmUtVXNlci1JZCIsIGxpbmVVc2VySWQpOwogICAgfQoKICAgIGlmIChvcHRzLmJvZHkgJiYgdHlwZW9mIG9wdHMuYm9keSAhPT0gInN0cmluZyIgJiYgIShvcHRzLmJvZHkgaW5zdGFuY2VvZiBGb3JtRGF0YSkpIHsKICAgICAgY29uc3QgYm9keSA9IE9iamVjdC5hc3NpZ24oe30sIG9wdHMuYm9keSk7CiAgICAgIGlmIChub3JtYWxpemVQYXRoKHBhdGgpID09PSAiL2FwaS9wdWJsaWMvYXBwb2ludG1lbnRzIikgewogICAgICAgIGJvZHkuZHVyYXRpb25fbWludXRlcyA9IENPTkZJRy5ERUZBVUxUX1NMT1RfTUlOVVRFUzsKICAgICAgfQogICAgICBpZiAoT2JqZWN0LnByb3RvdHlwZS5oYXNPd25Qcm9wZXJ0eS5jYWxsKGJvZHksICJsaW5lX3VzZXJfaWQiKSkgewogICAgICAgIGNvbnN0IHJhd0RlbW9JZCA9IFN0cmluZyhib2R5LmxpbmVfdXNlcl9pZCB8fCAiIik7CiAgICAgICAgaWYgKCFsaW5lSWRUb2tlbiAmJiBDT05GSUcuSVNfREVNTyAmJiBpc0V4cGxpY2l0RGVtb1BhZ2UoKSAmJiBpc0RlbW9MaW5lVXNlcklkKHJhd0RlbW9JZCkpIHsKICAgICAgICAgIGhlYWRlcnMuc2V0KCJYLURlbW8tTGluZS1Vc2VyLUlkIiwgcmF3RGVtb0lkKTsKICAgICAgICB9CiAgICAgICAgZGVsZXRlIGJvZHkubGluZV91c2VyX2lkOwogICAgICB9CiAgICAgIGRlbGV0ZSBib2R5LmlkX3Rva2VuOwogICAgICBoZWFkZXJzLnNldCgiQ29udGVudC1UeXBlIiwgImFwcGxpY2F0aW9uL2pzb24iKTsKICAgICAgb3B0cy5ib2R5ID0gSlNPTi5zdHJpbmdpZnkoYm9keSk7CiAgICB9CgogICAgY29uc3QgY29udHJvbGxlciA9IG5ldyBBYm9ydENvbnRyb2xsZXIoKTsKICAgIGNvbnN0IHRpbWVvdXQgPSBnbG9iYWwuc2V0VGltZW91dChmdW5jdGlvbiAoKSB7IGNvbnRyb2xsZXIuYWJvcnQoKTsgfSwgMjAwMDApOwogICAgb3B0cy5oZWFkZXJzID0gaGVhZGVyczsKICAgIG9wdHMuc2lnbmFsID0gY29udHJvbGxlci5zaWduYWw7CiAgICBvcHRzLmNhY2hlID0gIm5vLXN0b3JlIjsKCiAgICBsZXQgcmVzcG9uc2U7CiAgICB0cnkgewogICAgICByZXNwb25zZSA9IGF3YWl0IGZldGNoKGJ1aWxkVXJsKHBhdGgsIHBhcmFtcyksIG9wdHMpOwogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgaWYgKGVycm9yICYmIGVycm9yLm5hbWUgPT09ICJBYm9ydEVycm9yIikgewogICAgICAgIGNvbnN0IHRpbWVvdXRFcnJvciA9IG5ldyBFcnJvcigi6YCa5L+h44GM44K/44Kk44Og44Ki44Km44OI44GX44G+44GX44Gf44CC5pmC6ZaT44KS44GK44GE44Gm5YaN5bqm44GK6Kmm44GX44GP44Gg44GV44GE44CCIik7CiAgICAgICAgdGltZW91dEVycm9yLmNvZGUgPSAicmVxdWVzdF90aW1lb3V0IjsKICAgICAgICB0aHJvdyB0aW1lb3V0RXJyb3I7CiAgICAgIH0KICAgICAgdGhyb3cgbmV3IEVycm9yKCLpgJrkv6HjgafjgY3jgb7jgZvjgpPjgafjgZfjgZ/jgILjgqTjg7Pjgr/jg7zjg43jg4Pjg4jmjqXntprjgpLjgZTnorroqo3jgY/jgaDjgZXjgYTjgIIiKTsKICAgIH0gZmluYWxseSB7CiAgICAgIGdsb2JhbC5jbGVhclRpbWVvdXQodGltZW91dCk7CiAgICB9CgogICAgY29uc3QgdGV4dCA9IGF3YWl0IHJlc3BvbnNlLnRleHQoKTsKICAgIGxldCBkYXRhID0gbnVsbDsKICAgIGlmICh0ZXh0KSB7CiAgICAgIHRyeSB7IGRhdGEgPSBKU09OLnBhcnNlKHRleHQpOyB9CiAgICAgIGNhdGNoIChfKSB7IGRhdGEgPSB7IG9rOiBmYWxzZSwgbWVzc2FnZTogdGV4dCB9OyB9CiAgICB9CgogICAgaWYgKCFyZXNwb25zZS5vayB8fCAoZGF0YSAmJiBkYXRhLm9rID09PSBmYWxzZSkpIHsKICAgICAgY29uc3QgZXJyb3IgPSBuZXcgRXJyb3IoCiAgICAgICAgKGRhdGEgJiYgKGRhdGEubWVzc2FnZSB8fCBkYXRhLmVycm9yKSkgfHwKICAgICAgICAi5Yem55CG44Gr5aSx5pWX44GX44G+44GX44Gf44CCIgogICAgICApOwogICAgICBlcnJvci5zdGF0dXMgPSByZXNwb25zZS5zdGF0dXM7CiAgICAgIGVycm9yLmNvZGUgPSBkYXRhICYmIGRhdGEuZXJyb3I7CiAgICAgIGVycm9yLmRhdGEgPSBkYXRhOwogICAgICB0aHJvdyBlcnJvcjsKICAgIH0KICAgIHJldHVybiBkYXRhOwogIH0KCiAgZnVuY3Rpb24gbm9ybWFsaXplUGhvbmUodmFsdWUpIHsKICAgIGlmICghdmFsdWUpIHJldHVybiAiIjsKICAgIGxldCBwaG9uZSA9IFN0cmluZyh2YWx1ZSkKICAgICAgLm5vcm1hbGl6ZSgiTkZLQyIpCiAgICAgIC5yZXBsYWNlKC9b44O84oCV4oCQ4oCR4oCS4oCT4oCU4oiSXS9nLCAiLSIpCiAgICAgIC5yZXBsYWNlKC9bXjAtOStdL2csICIiKTsKICAgIGlmIChwaG9uZS5zdGFydHNXaXRoKCIwMDgxIikpIHBob25lID0gIjAiICsgcGhvbmUuc2xpY2UoNCk7CiAgICBlbHNlIGlmIChwaG9uZS5zdGFydHNXaXRoKCIrODEiKSkgcGhvbmUgPSAiMCIgKyBwaG9uZS5zbGljZSgzKTsKICAgIGVsc2UgaWYgKHBob25lLnN0YXJ0c1dpdGgoIjgxIikgJiYgcGhvbmUubGVuZ3RoID49IDExKSBwaG9uZSA9ICIwIiArIHBob25lLnNsaWNlKDIpOwogICAgcmV0dXJuIHBob25lLnJlcGxhY2UoL1xEL2csICIiKTsKICB9CgogIGZ1bmN0aW9uIGZvcm1hdERhdGUodmFsdWUsIHdpdGhUaW1lKSB7CiAgICBpZiAoIXZhbHVlKSByZXR1cm4gIu+8jSI7CiAgICBjb25zdCBkYXRlID0gbmV3IERhdGUodmFsdWUpOwogICAgaWYgKCFOdW1iZXIuaXNGaW5pdGUoZGF0ZS5nZXRUaW1lKCkpKSByZXR1cm4gU3RyaW5nKHZhbHVlKTsKICAgIGNvbnN0IG9wdGlvbnMgPSB3aXRoVGltZQogICAgICA/IHsgdGltZVpvbmU6IENPTkZJRy5USU1FWk9ORSwgeWVhcjogIm51bWVyaWMiLCBtb250aDogIjItZGlnaXQiLCBkYXk6ICIyLWRpZ2l0Iiwgd2Vla2RheTogInNob3J0IiwgaG91cjogIjItZGlnaXQiLCBtaW51dGU6ICIyLWRpZ2l0IiwgaG91cjEyOiBmYWxzZSB9CiAgICAgIDogeyB0aW1lWm9uZTogQ09ORklHLlRJTUVaT05FLCB5ZWFyOiAibnVtZXJpYyIsIG1vbnRoOiAiMi1kaWdpdCIsIGRheTogIjItZGlnaXQiLCB3ZWVrZGF5OiAic2hvcnQiIH07CiAgICByZXR1cm4gbmV3IEludGwuRGF0ZVRpbWVGb3JtYXQoImphLUpQIiwgb3B0aW9ucykuZm9ybWF0KGRhdGUpOwogIH0KCiAgZnVuY3Rpb24gdG9kYXlKc3QoKSB7CiAgICBjb25zdCBwYXJ0cyA9IG5ldyBJbnRsLkRhdGVUaW1lRm9ybWF0KCJlbi1DQSIsIHsKICAgICAgdGltZVpvbmU6IENPTkZJRy5USU1FWk9ORSwKICAgICAgeWVhcjogIm51bWVyaWMiLAogICAgICBtb250aDogIjItZGlnaXQiLAogICAgICBkYXk6ICIyLWRpZ2l0IiwKICAgIH0pLmZvcm1hdFRvUGFydHMobmV3IERhdGUoKSk7CiAgICBjb25zdCBtYXAgPSB7fTsKICAgIHBhcnRzLmZvckVhY2goZnVuY3Rpb24gKHApIHsgbWFwW3AudHlwZV0gPSBwLnZhbHVlOyB9KTsKICAgIHJldHVybiBtYXAueWVhciArICItIiArIG1hcC5tb250aCArICItIiArIG1hcC5kYXk7CiAgfQoKICBmdW5jdGlvbiBlc2NhcGVIdG1sKHZhbHVlKSB7CiAgICByZXR1cm4gU3RyaW5nKHZhbHVlID09IG51bGwgPyAiIiA6IHZhbHVlKS5yZXBsYWNlKC9bJjw+IiddL2csIGZ1bmN0aW9uIChjaGFyKSB7CiAgICAgIHJldHVybiB7ICImIjogIiZhbXA7IiwgIjwiOiAiJmx0OyIsICI+IjogIiZndDsiLCAnIic6ICImcXVvdDsiLCAiJyI6ICImIzM5OyIgfVtjaGFyXTsKICAgIH0pOwogIH0KCiAgZnVuY3Rpb24gc3RhdHVzTGFiZWwodmFsdWUpIHsKICAgIGNvbnN0IGxhYmVscyA9IHsKICAgICAgbmV3OiAi5paw6KaP55u46KuHIiwgcmV2aWV3aW5nOiAi56K66KqN5LitIiwgcmVwbHlfd2FpdGluZzogIui/lOS/oeW+heOBoSIsCiAgICAgIGFwcG9pbnRtZW50X3NjaGVkdWxlZDogIumdouirh+S6iOWumiIsIGNvbnZlcnRlZDogIuahiOS7tuWMlua4iOOBvyIsIGNsb3NlZDogIue1guS6hiIsCiAgICAgIG5vdF9kZWNpZGVkOiAi5Y+X5Lu75pyq56K65a6aIiwgZXN0aW1hdGVfcHJlcGFyaW5nOiAi6KaL56mN5rqW5YKZ5LitIiwKICAgICAgZXN0aW1hdGVfc2VudDogIuimi+epjeahiOWGhea4iOOBvyIsIGFjY2VwdGVkOiAi5Y+X5Lu75riI44G/IiwgZGVjbGluZWQ6ICLovp7pgIDjg7vkuI3lj5fku7siLAogICAgICBub3Rfc3RhcnRlZDogIuacquedgOaJiyIsIHJlcXVlc3RlZDogIuabuOmhnuS+nemgvOa4iOOBvyIsCiAgICAgIHBhcnRpYWxseV9yZWNlaXZlZDogIuS4gOmDqOWPl+mgmCIsIGRlZmljaWVudDogIuS4jei2s+OBguOCiiIsIGNvbXBsZXRlOiAi5pu46aGe5a6M5LqGIiwKICAgICAgcHJlcGFyaW5nOiAi55Sz6KuL5rqW5YKZ5LitIiwgcmVhZHlfdG9fc3VibWl0OiAi5o+Q5Ye65rqW5YKZ5a6M5LqGIiwKICAgICAgc3VibWl0dGVkOiAi55Sz6KuL5o+Q5Ye65riI44G/IiwgdW5kZXJfcmV2aWV3OiAi5a+p5p+75LitIiwKICAgICAgY29ycmVjdGlvbl9yZXF1aXJlZDogIuijnOato+ODu+i/veWKoOizh+aWmeWvvuW/nCIsIGFwcHJvdmVkOiAi6Kix5Y+v44O75a6M5LqGIiwKICAgICAgcmVqZWN0ZWQ6ICLkuI3oqLHlj68iLCB3aXRoZHJhd246ICLlj5bkuIvjgZIiLCBvcGVuOiAi6YCy6KGM5LitIiwgb25faG9sZDogIuS/neeVmSIsCiAgICAgIGNvbXBsZXRlZDogIuWujOS6hiIsIGNhbmNlbGxlZDogIuWPlua2iCIsIG5vdF9yZXF1aXJlZDogIuabtOaWsOWvvuixoeWkliIsCiAgICAgIGZ1dHVyZTogIuWwhuadpeabtOaWsCIsIG5vdGljZV9kdWU6ICLmoYjlhoXmmYLmnJ8iLCBub3RpZmllZDogIuabtOaWsOahiOWGhea4iOOBvyIsCiAgICAgIHJlbmV3YWxfaW5fcHJvZ3Jlc3M6ICLmm7TmlrDmiYvntprjgY3kuK0iLCByZW5ld2VkOiAi5pu05paw5a6M5LqGIiwgZXhwaXJlZDogIuacn+mZkOe1jOmBjiIsCiAgICAgIHJlc2VydmVkOiAi5LqI57SE5Y+X5LuYIiwgY29uZmlybWVkOiAi5LqI57SE56K65a6aIiwgY2hhbmdlX3JlcXVlc3RlZDogIuWkieabtOS+nemgvOS4rSIsCiAgICAgIGNhbmNlbF9yZXF1ZXN0ZWQ6ICLjgq3jg6Pjg7Pjgrvjg6vkvp3poLzkuK0iLCBub19zaG93OiAi5p2l5omA44Gq44GXIiwKICAgICAgbm90X3N1Ym1pdHRlZDogIuacquaPkOWHuiIsIGNoZWNraW5nOiAi56K66KqN5LitIiwgcmVwbGFjZW1lbnRfcmVxdWVzdGVkOiAi5beu44GX5pu/44GI5L6d6aC8IiwKICAgICAgbm90X2FwcGxpY2FibGU6ICLlr77osaHlpJYiLCBpbl9wcm9ncmVzczogIuWvvuW/nOS4rSIsCiAgICB9OwogICAgcmV0dXJuIGxhYmVsc1t2YWx1ZV0gfHwgdmFsdWUgfHwgIu+8jSI7CiAgfQoKICBnbG9iYWwuRFBST19HWU9TRUlfQ09ORklHID0gQ09ORklHOwogIGdsb2JhbC5EUFJPX0dZT1NFSSA9IE9iamVjdC5mcmVlemUoewogICAgY29uZmlnOiBDT05GSUcsCiAgICBidWlsZFVybDogYnVpbGRVcmwsCiAgICBhcGlGZXRjaDogYXBpRmV0Y2gsCiAgICBnZXRBZG1pbkNvZGU6IGdldEFkbWluQ29kZSwKICAgIHNldEFkbWluQ29kZTogc2V0QWRtaW5Db2RlLAogICAgY2xlYXJBZG1pbkNvZGU6IGNsZWFyQWRtaW5Db2RlLAogICAgZ2V0TGluZUlkVG9rZW46IGdldExpbmVJZFRva2VuLAogICAgc2V0TGluZUlkVG9rZW46IHNldExpbmVJZFRva2VuLAogICAgY2xlYXJMaW5lSWRUb2tlbjogY2xlYXJMaW5lSWRUb2tlbiwKICAgIGdldExpbmVVc2VySWQ6IGdldExpbmVVc2VySWQsCiAgICBub3JtYWxpemVQaG9uZTogbm9ybWFsaXplUGhvbmUsCiAgICBmb3JtYXREYXRlOiBmb3JtYXREYXRlLAogICAgdG9kYXlKc3Q6IHRvZGF5SnN0LAogICAgZXNjYXBlSHRtbDogZXNjYXBlSHRtbCwKICAgIHN0YXR1c0xhYmVsOiBzdGF0dXNMYWJlbCwKICB9KTsKfSkod2luZG93KTsK"))
+
+          p = Path("index.html")
+          text = p.read_text(encoding="utf-8")
+          old = "duration_minutes:60"
+          new = "duration_minutes:30"
+
+          if old in text:
+              count = text.count(old)
+              p.write_text(text.replace(old, new), encoding="utf-8")
+              print({"replaced": count})
+          elif new in text:
+              print("30-minute patch already present")
+          else:
+              raise SystemExit("booking duration marker not found")
+
+          verify = p.read_text(encoding="utf-8")
+          assert old not in verify
+          assert new in verify
+
+      - name: Verify patched frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824' config.js
+          grep -F 'https://cbknucemarcpbscirzyv.supabase.co/functions/v1/dpro-gyosei-product-ready-gateway' config.js
+          grep -F 'X-Line-Id-Token' config.js
+          ! grep -F 'headers.set("X-Line-User-Id"' config.js
+          grep -F 'duration_minutes:30' index.html
+          ! grep -F 'duration_minutes:60' index.html
+          echo "FRONTEND_PATCH_VERIFY=PASS"
+
+      - name: Commit R3 frontend patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "dpro-product-ready-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add config.js index.html
+          if git diff --cached --quiet; then
+            echo "R3 frontend patch already current."
+          else
+            git commit -m "GYOSEI R3: bind Product READY gateway and 30-minute booking"
+            git push
+          fi
+          echo "PATCH_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Wait for GitHub Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line'
+          EXPECT='GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824'
+          ok=0
+          for i in $(seq 1 36); do
+            status="$(curl -sS -o /tmp/gyosei-config.js -w '%{http_code}' "${BASE}/config.js?r3=${GITHUB_RUN_ID}-${i}" || true)"
+            if [ "$status" = "200" ] && grep -Fq "$EXPECT" /tmp/gyosei-config.js; then
+              if curl -fsSL "${BASE}/index.html?r3=${GITHUB_RUN_ID}-${i}" | grep -Fq 'duration_minutes:30'; then
+                ok=1
+                echo "PAGES_PROPAGATION=PASS attempt=$i"
+                break
+              fi
+            fi
+            sleep 10
+          done
+          [ "$ok" = "1" ] || exit 1
+
+      - name: Verify Product READY health
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://cbknucemarcpbscirzyv.supabase.co/functions/v1/dpro-gyosei-product-ready-gateway/api/health'
+          ok=0
+          for i in $(seq 1 18); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' "${URL}?r3=${GITHUB_RUN_ID}-${i}" || true)"
+            if [ "$status" = "200" ]; then
+              if python - <<'PY'
+          import json
+          d=json.load(open('/tmp/health.json',encoding='utf-8'))
+          assert d.get('ok') is True
+          assert d.get('systemCode') == 'GYOSEI'
+          assert d.get('versions',{}).get('aligned') is True
+          assert d.get('versions',{}).get('database') == 'GYOSEI-R2-DB-PRODUCT-READY-20260824'
+          assert d.get('versions',{}).get('frontend') == 'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824'
+          assert d.get('adapterVersion') == 'GYOSEI-R2-ADAPTER-PRODUCT-READY-20260824'
+          assert d.get('line',{}).get('verifiedSubAuthoritative') is True
+          assert d.get('line',{}).get('clientSuppliedLineUserIdAuthoritative') is False
+          assert d.get('line',{}).get('selfTest',{}).get('pass') is True
+          assert d.get('booking',{}).get('slotMinutes') == 30
+          assert d.get('booking',{}).get('pastServerGuard') is True
+          assert d.get('booking',{}).get('businessCalendarServerGuard') is True
+          print('HEALTH_JSON=PASS')
+          PY
+              then
+                ok=1
+                break
+              fi
+            fi
+            sleep 10
+          done
+          [ "$ok" = "1" ] || { cat /tmp/health.json || true; exit 1; }
+
+      - name: Install Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gyosei-r3
+          cd /tmp/gyosei-r3
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run fresh Chromium matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p product-ready-evidence/gyosei-r3/screenshots
+          cat > /tmp/gyosei-r3/qa.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const BASE='https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/';
+          const cases=[
+            {key:'pc1440-public',file:'index.html?demo=1',width:1440,height:1000},
+            {key:'mobile390-public',file:'index.html?demo=1',width:390,height:844},
+            {key:'mobile320-member',file:'member.html?demo=1',width:320,height:720},
+            {key:'ipad1024-owner',file:'owner-ipad.html?demo=1',width:1024,height:768},
+            {key:'pc1440-owner',file:'owner.html?demo=1',width:1440,height:1000},
+            {key:'pc1440-system-check',file:'system-check.html?demo=1',width:1440,height:1000}
+          ];
+          const blocking=/(ReferenceError|TypeError|SyntaxError|Uncaught|is not defined|Cannot read (properties|property)|Failed to execute)/i;
+          const technical=/(SUPABASE_SERVICE_ROLE_KEY|service[_ -]?role[_ -]?key|channel[_ -]?secret|stack trace|ReferenceError:|TypeError:|SyntaxError:)/i;
+
+          const browser=await chromium.launch({headless:true});
+          const results=[];
+          let failed=false;
+
+          for(const c of cases){
+            const ctx=await browser.newContext({viewport:{width:c.width,height:c.height},deviceScaleFactor:1});
+            const page=await ctx.newPage();
+            const pageErrors=[], consoleErrors=[], httpErrors=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+            page.on('response',r=>{if(r.status()>=400)httpErrors.push({status:r.status(),url:r.url(),resourceType:r.request().resourceType()})});
+
+            let status=0, navigationError='';
+            try{
+              const resp=await page.goto(BASE+c.file+(c.file.includes('?')?'&':'?')+'qa='+Date.now(),{waitUntil:'domcontentloaded',timeout:60000});
+              status=resp?.status()||0;
+              await page.waitForTimeout(3500);
+            }catch(e){navigationError=String(e)}
+
+            const metrics=navigationError?null:await page.evaluate(()=>{
+              const de=document.documentElement,b=document.body;
+              return {
+                innerWidth:window.innerWidth,
+                documentScrollWidth:de?.scrollWidth||0,
+                bodyScrollWidth:b?.scrollWidth||0,
+                overflow:Math.max(de?.scrollWidth||0,b?.scrollWidth||0)>window.innerWidth+1,
+                text:(b?.innerText||'').slice(0,250000)
+              };
+            });
+
+            const blockingConsoleErrors=consoleErrors.filter(x=>blocking.test(x));
+            const criticalResourceErrors=httpErrors.filter(x=>['document','script','stylesheet'].includes(x.resourceType));
+            const technicalExposure=metrics?technical.test(metrics.text):true;
+
+            const record={...c,url:BASE+c.file,httpStatus:status,navigationError,
+              overflow:metrics?.overflow??true,innerWidth:metrics?.innerWidth??0,
+              documentScrollWidth:metrics?.documentScrollWidth??0,bodyScrollWidth:metrics?.bodyScrollWidth??0,
+              pageErrors,consoleErrors,blockingConsoleErrors,httpErrors,criticalResourceErrors,technicalExposure};
+            record.ok=!navigationError&&status===200&&!record.overflow&&pageErrors.length===0&&blockingConsoleErrors.length===0&&criticalResourceErrors.length===0&&!technicalExposure;
+            if(!record.ok)failed=true;
+            results.push(record);
+            if(!navigationError)await page.screenshot({path:`product-ready-evidence/gyosei-r3/screenshots/${c.key}.png`,fullPage:true});
+            await ctx.close();
+          }
+
+          await browser.close();
+          const summary={ok:!failed,checkedAt:new Date().toISOString(),sourcePatchHead:process.env.PATCH_HEAD||null,
+            frontendVersion:'GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824',
+            adapterVersion:'GYOSEI-R2-ADAPTER-PRODUCT-READY-20260824',
+            databaseVersion:'GYOSEI-R2-DB-PRODUCT-READY-20260824',
+            total:results.length,passed:results.filter(x=>x.ok).length,failed:results.filter(x=>!x.ok).length,results};
+          fs.writeFileSync('product-ready-evidence/gyosei-r3/browser-final.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify({ok:summary.ok,total:summary.total,passed:summary.passed,failed:summary.failed},null,2));
+          process.exit(summary.ok?0:2);
+          EOF
+
+          set +e
+          node /tmp/gyosei-r3/qa.mjs
+          rc=$?
+          set -e
+          echo "QA_EXIT=$rc" >> "$GITHUB_ENV"
+
+      - name: Save final evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f product-ready-evidence/gyosei-r3/browser-final.json
+          cp /tmp/health.json product-ready-evidence/gyosei-r3/health-final.json
+          git config user.name "dpro-product-ready-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add product-ready-evidence/gyosei-r3
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish GYOSEI R3 Product READY evidence"
+          fi
+          git pull --rebase
+          git push
+
+      - name: PASS cleanup
+        if: env.QA_EXIT == '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          git config user.name "dpro-product-ready-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/STEP-GYOSEI-PRODUCT-READY-R3-FINAL.yml
+          git commit -m "Complete GYOSEI Product READY R3 final gate"
+          git push
+
+      - name: FAIL preserve evidence
+        if: env.QA_EXIT != '0'
+        shell: bash
+        run: |
+          echo "GYOSEI R3 still has a blocking browser failure."
+          echo "Evidence is preserved under product-ready-evidence/gyosei-r3/."
+          exit 1
