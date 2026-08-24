@@ -1,7 +1,7 @@
 /**
  * DPRO 行政書士・許認可申請 LINE
- * STEP GYOSEI-4 公開基盤・共通設定
- * Version: GYOSEI-4-CONFIG-PUBLIC-BASE-20260716
+ * PRODUCT READY R2 protected frontend binding
+ * Version: GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824
  */
 (function (global) {
   "use strict";
@@ -10,10 +10,10 @@
     SERVICE_NAME: "DPRO 行政書士・許認可申請 LINE",
     OFFICE_NAME: "DPRO行政書士事務所",
     OFFICE_CODE: "dpro_gyosei_demo",
-    API_BASE: "https://dpro-gyosei-permit-line-api.dpromstk2000.workers.dev",
+    API_BASE: "https://cbknucemarcpbscirzyv.supabase.co/functions/v1/dpro-gyosei-product-ready-gateway",
     TIMEZONE: "Asia/Tokyo",
     DEFAULT_SLOT_MINUTES: 30,
-    VERSION: "GYOSEI-4-CONFIG-PUBLIC-BASE-20260716",
+    VERSION: "GYOSEI-R2-FRONTEND-PRODUCT-READY-20260824",
     IS_DEMO: true,
     COLORS: Object.freeze({
       primary: "#17324D",
@@ -35,6 +35,7 @@
   });
 
   const ADMIN_SESSION_KEY = "dpro_gyosei_admin_code";
+  const LINE_ID_TOKEN_SESSION_KEY = "dpro_gyosei_line_id_token";
 
   function normalizePath(path) {
     const p = String(path || "").trim();
@@ -75,13 +76,44 @@
     setAdminCode("");
   }
 
+  function getLineIdToken() {
+    try {
+      return global.sessionStorage.getItem(LINE_ID_TOKEN_SESSION_KEY) || "";
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function setLineIdToken(value) {
+    const token = String(value || "").trim();
+    try {
+      if (token) global.sessionStorage.setItem(LINE_ID_TOKEN_SESSION_KEY, token);
+      else global.sessionStorage.removeItem(LINE_ID_TOKEN_SESSION_KEY);
+    } catch (_) {}
+    return token;
+  }
+
+  function clearLineIdToken() {
+    setLineIdToken("");
+  }
+
+  function isExplicitDemoPage() {
+    try {
+      return new URL(global.location.href).searchParams.get("demo") === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function isDemoLineUserId(value) {
+    return /^demo_gyosei_line_\d+$/.test(String(value || ""));
+  }
+
   function getLineUserId(fallback) {
+    if (!CONFIG.IS_DEMO || !isExplicitDemoPage()) return "";
     const url = new URL(global.location.href);
-    return (
-      url.searchParams.get("line_user_id") ||
-      fallback ||
-      (url.searchParams.get("demo") === "1" ? CONFIG.DEMO.lineUserId : "")
-    );
+    const candidate = url.searchParams.get("line_user_id") || fallback || CONFIG.DEMO.lineUserId;
+    return isDemoLineUserId(candidate) ? candidate : CONFIG.DEMO.lineUserId;
   }
 
   async function apiFetch(path, options) {
@@ -89,9 +121,11 @@
     const params = opts.params || null;
     const admin = Boolean(opts.admin);
     const lineUserId = opts.lineUserId || "";
+    const lineIdToken = opts.lineIdToken || getLineIdToken();
     delete opts.params;
     delete opts.admin;
     delete opts.lineUserId;
+    delete opts.lineIdToken;
 
     const headers = new Headers(opts.headers || {});
     headers.set("X-Office-Code", CONFIG.OFFICE_CODE);
@@ -105,11 +139,28 @@
       }
       headers.set("X-Admin-Code", code);
     }
-    if (lineUserId) headers.set("X-Line-User-Id", lineUserId);
+
+    if (lineIdToken) {
+      headers.set("X-Line-Id-Token", lineIdToken);
+    } else if (CONFIG.IS_DEMO && isExplicitDemoPage() && isDemoLineUserId(lineUserId)) {
+      headers.set("X-Demo-Line-User-Id", lineUserId);
+    }
 
     if (opts.body && typeof opts.body !== "string" && !(opts.body instanceof FormData)) {
+      const body = Object.assign({}, opts.body);
+      if (normalizePath(path) === "/api/public/appointments") {
+        body.duration_minutes = CONFIG.DEFAULT_SLOT_MINUTES;
+      }
+      if (Object.prototype.hasOwnProperty.call(body, "line_user_id")) {
+        const rawDemoId = String(body.line_user_id || "");
+        if (!lineIdToken && CONFIG.IS_DEMO && isExplicitDemoPage() && isDemoLineUserId(rawDemoId)) {
+          headers.set("X-Demo-Line-User-Id", rawDemoId);
+        }
+        delete body.line_user_id;
+      }
+      delete body.id_token;
       headers.set("Content-Type", "application/json");
-      opts.body = JSON.stringify(opts.body);
+      opts.body = JSON.stringify(body);
     }
 
     const controller = new AbortController();
@@ -158,7 +209,8 @@
       .normalize("NFKC")
       .replace(/[ー―‐‑‒–—−]/g, "-")
       .replace(/[^0-9+]/g, "");
-    if (phone.startsWith("+81")) phone = "0" + phone.slice(3);
+    if (phone.startsWith("0081")) phone = "0" + phone.slice(4);
+    else if (phone.startsWith("+81")) phone = "0" + phone.slice(3);
     else if (phone.startsWith("81") && phone.length >= 11) phone = "0" + phone.slice(2);
     return phone.replace(/\D/g, "");
   }
@@ -222,6 +274,9 @@
     getAdminCode: getAdminCode,
     setAdminCode: setAdminCode,
     clearAdminCode: clearAdminCode,
+    getLineIdToken: getLineIdToken,
+    setLineIdToken: setLineIdToken,
+    clearLineIdToken: clearLineIdToken,
     getLineUserId: getLineUserId,
     normalizePhone: normalizePhone,
     formatDate: formatDate,
