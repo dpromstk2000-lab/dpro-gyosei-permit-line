@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - 'tutorial.html'
-      - '.github/workflows/STEP-GYOSEI-TUTORIAL-R3.yml'
 
 permissions:
   contents: write
@@ -32,7 +31,7 @@ jobs:
           echo "QA_SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
           echo "QA_SOURCE_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
           test -f tutorial.html
-          grep -F 'GYOSEI-TUTORIAL-R3-V1.0-20260829' tutorial.html
+          grep -F 'GYOSEI-TUTORIAL-R3-V1.1-20260829' tutorial.html
           grep -F 'GYOSEI-10' tutorial.html
           if git grep -nE 'fetch\([^)]*method[[:space:]]*:[[:space:]]*["'\''](POST|PUT|PATCH|DELETE)|apiFetch\([^)]*\{[^}]*method[[:space:]]*:[[:space:]]*["'\''](POST|PUT|PATCH|DELETE)' -- tutorial.html; then
             echo "Unsafe write primitive found in tutorial.html"
@@ -56,7 +55,7 @@ jobs:
           URL="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html"
           ok=0
           for i in $(seq 1 72); do
-            if curl -fsSL --max-time 12 "$URL?deploy_probe=$GITHUB_SHA-$i" | grep -Fq 'GYOSEI-TUTORIAL-R3-V1.0-20260829'; then
+            if curl -fsSL --max-time 12 "$URL?deploy_probe=$GITHUB_SHA-$i" | grep -Fq 'GYOSEI-TUTORIAL-R3-V1.1-20260829'; then
               ok=1
               echo "Tutorial deployed on attempt $i"
               break
@@ -77,7 +76,7 @@ jobs:
 
           const BASE='https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/';
           const TUTORIAL=BASE+'tutorial.html';
-          const expectedVersion='GYOSEI-TUTORIAL-R3-V1.0-20260829';
+          const expectedVersion='GYOSEI-TUTORIAL-R3-V1.1-20260829';
           const sizes=[
             {key:'pc1440',width:1440,height:1000},
             {key:'tablet1024',width:1024,height:768},
@@ -108,24 +107,68 @@ jobs:
           }
           async function enterIpadCode(page){
             const frame=page.frameLocator('#productFrame');
-            await frame.locator('#adminCode').fill('1234');
+            if(await frame.locator('nav.tabs').isVisible().catch(()=>false)) return 'already_authenticated';
+            const input=frame.locator('#adminCode');
+            if(await input.isVisible().catch(()=>false)){
+              await input.fill('1234');
+              return 'filled';
+            }
+            return 'auto_auth_in_progress';
           }
-          async function clickIpadLogin(page){
+          async function ensureIpadReady(page,{keyboard=false}={}){
             const frame=page.frameLocator('#productFrame');
-            await frame.locator('#loginForm .btn-primary').click();
-            await frame.locator('nav.tabs').waitFor({state:'visible',timeout:20000});
+            const tabs=frame.locator('nav.tabs');
+            if(await tabs.isVisible().catch(()=>false)) return 'already_authenticated';
+            const loading=frame.locator('#loading');
+            if(await loading.isVisible().catch(()=>false)){
+              await Promise.race([
+                tabs.waitFor({state:'visible',timeout:20000}).catch(()=>null),
+                loading.waitFor({state:'hidden',timeout:20000}).catch(()=>null)
+              ]);
+            }
+            if(await tabs.isVisible().catch(()=>false)) return 'auto_authenticated';
+            const input=frame.locator('#adminCode');
+            if(await input.isVisible().catch(()=>false)){
+              if(!(await input.inputValue().catch(()=>''))) await input.fill('1234');
+              const button=frame.locator('#loginForm .btn-primary');
+              await frame.locator('#loading').waitFor({state:'hidden',timeout:20000}).catch(()=>{});
+              if(keyboard){
+                await button.focus();
+                await page.keyboard.press('Enter');
+              }else{
+                await button.click();
+              }
+              await tabs.waitFor({state:'visible',timeout:20000});
+              return keyboard ? 'keyboard_login' : 'pointer_login';
+            }
+            await tabs.waitFor({state:'visible',timeout:20000});
+            return 'auto_authenticated_late';
           }
-          async function ownerRecoverIfNeeded(page,resolution){
-            if(resolution?.used!=='fallback') return false;
+          async function ownerRecoverIfNeeded(page,resolution,{keyboard=false}={}){
             const frame=page.frameLocator('#productFrame');
+            const title=frame.locator('#pageTitle');
+            if(await title.isVisible().catch(()=>false)) return 'already_authenticated';
+            if(!['fallback','recovery'].includes(resolution?.used)) return false;
+            const loading=frame.locator('#loading');
+            if(await loading.isVisible().catch(()=>false)){
+              await Promise.race([
+                title.waitFor({state:'visible',timeout:20000}).catch(()=>null),
+                loading.waitFor({state:'hidden',timeout:20000}).catch(()=>null)
+              ]);
+            }
+            if(await title.isVisible().catch(()=>false)) return 'auto_authenticated';
             const input=frame.locator('#adminCodeInput');
             if(await input.isVisible().catch(()=>false)){
               await input.fill('1234');
-              await frame.locator('#adminLoginForm .btn-primary').click();
-              await frame.locator('#pageTitle').waitFor({state:'visible',timeout:20000});
-              return true;
+              const button=frame.locator('#adminLoginForm .btn-primary');
+              await frame.locator('#loading').waitFor({state:'hidden',timeout:20000}).catch(()=>{});
+              if(keyboard){await button.focus();await page.keyboard.press('Enter');}
+              else await button.click();
+              await title.waitFor({state:'visible',timeout:20000});
+              return keyboard ? 'keyboard_login' : 'pointer_login';
             }
-            return false;
+            await title.waitFor({state:'visible',timeout:20000});
+            return 'auto_authenticated_late';
           }
           function inside(rect,w,h){
             return rect.left>=7 && rect.top>=7 && rect.right<=w-7+0.5 && rect.bottom<=h-7+0.5;
@@ -264,7 +307,7 @@ jobs:
                 await enterIpadCode(page);
               }
               if(i===6){
-                await clickIpadLogin(page);
+                row.steps[i].ipadReady=await ensureIpadReady(page);
               }
               if(i===8){
                 const recovered=await ownerRecoverIfNeeded(page,r);
@@ -297,25 +340,19 @@ jobs:
             for(let i=0;i<10;i++){
               if(i===5){
                 const frame=page.frameLocator('#productFrame');
-                await frame.locator('#adminCode').focus();
-                await page.keyboard.type('1234');
+                const input=frame.locator('#adminCode');
+                if(await input.isVisible().catch(()=>false)){
+                  await input.focus();
+                  await page.keyboard.press('Control+A').catch(()=>{});
+                  await page.keyboard.type('1234');
+                }
               }
               if(i===6){
-                const frame=page.frameLocator('#productFrame');
-                await frame.locator('#loginForm .btn-primary').focus();
-                await page.keyboard.press('Enter');
-                await frame.locator('nav.tabs').waitFor({state:'visible',timeout:20000});
+                await ensureIpadReady(page,{keyboard:true});
               }
               if(i===8){
                 const r=await page.evaluate(()=>window.__DPRO_TUTORIAL__.getTargetState());
-                if(r.used==='fallback'){
-                  const frame=page.frameLocator('#productFrame');
-                  const input=frame.locator('#adminCodeInput');
-                  if(await input.isVisible().catch(()=>false)){
-                    await input.focus(); await page.keyboard.type('1234'); await page.keyboard.press('Enter');
-                    await frame.locator('#pageTitle').waitFor({state:'visible',timeout:20000});
-                  }
-                }
+                await ownerRecoverIfNeeded(page,r,{keyboard:true});
               }
               if(i<9){
                 await page.keyboard.press('Alt+ArrowRight');
