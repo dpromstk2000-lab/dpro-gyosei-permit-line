@@ -1,230 +1,64 @@
 <!doctype html>
-<!-- DPRO LIVE DEMO COMMON TEMPLATE V1.0 LOCK / CONFIGURABLE TEMPLATE -->
+<!-- GYOSEI-GUIDE-R4-V1.0-20260829 / SAME AUTHORITATIVE FIRST10 -->
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title id="pageTitle">DPRO 公開操作デモ・画面一覧</title>
+<meta name="theme-color" content="#17324d">
+<link rel="icon" href="data:,">
+<title>DPRO 行政書士・許認可申請 LINE｜Guide Center</title>
 <style>
-:root{
-  --bg:#f4f1ee;--card:#fff;--ink:#282522;--muted:#746d68;--line:#e2d9d2;
-  --brand:#247b78;--deep:#17324d;--brand2:#4c9b96;--soft:#eef8f6;
-  --shadow:0 16px 46px rgba(44,37,32,.10)
-}
-*{box-sizing:border-box}
-html{background:var(--bg);scroll-behavior:smooth}
-body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;line-height:1.65;background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}
-a{color:inherit}.page{width:min(1140px,calc(100% - 24px));margin:0 auto;padding:20px 0 48px}
-.hero{position:relative;overflow:hidden;padding:34px;border-radius:28px;color:#fff;background:linear-gradient(135deg,var(--deep),var(--brand) 63%,var(--brand2));box-shadow:0 23px 58px rgba(35,30,27,.20)}
-.hero:after{content:"";position:absolute;right:-95px;bottom:-150px;width:290px;height:290px;border-radius:50%;background:rgba(255,255,255,.07)}
-.kicker{position:relative;z-index:1;font-size:11px;font-weight:1000;letter-spacing:.14em;opacity:.9}
-.hero h1{position:relative;z-index:1;margin:10px 0 0;font-size:clamp(28px,5vw,49px);line-height:1.24}
-.hero p{position:relative;z-index:1;max-width:830px;margin:13px 0 0;font-size:14px;opacity:.93}
-.hero-actions{position:relative;z-index:1;display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
-.button{min-height:45px;display:inline-flex;align-items:center;justify-content:center;padding:9px 15px;border-radius:999px;text-decoration:none;font-size:12px;font-weight:950}
-.button-light{color:var(--deep);background:#fff}.button-ghost{color:#fff;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.09)}
-.notice{margin-top:15px;padding:15px 17px;border:1px solid #e5cda3;border-radius:15px;background:#fff5e5;color:#725013;font-size:12px;font-weight:760}
-.demo-info{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.demo-info>div{padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.96);box-shadow:var(--shadow)}
-.demo-info small{display:block;color:var(--brand);font-size:9px;font-weight:1000;letter-spacing:.08em}.demo-info strong{display:block;margin-top:4px;font-size:14px}
-.section-head{margin:32px 0 15px}.section-head small{color:var(--brand);font-size:10px;font-weight:1000;letter-spacing:.12em}.section-head h2{margin:5px 0 0;font-size:clamp(23px,4vw,34px)}.section-head p{max-width:840px;margin:7px 0 0;color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.card{min-width:0;padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.98);box-shadow:var(--shadow)}
-.card-number{color:var(--brand);font-size:10px;font-weight:1000;letter-spacing:.1em}.card h3{margin:7px 0 0;font-size:21px;line-height:1.4}.card p{margin:8px 0 0;color:var(--muted);font-size:12px}
-.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.pills span{padding:5px 8px;border-radius:999px;background:var(--soft);color:var(--deep);font-size:9px;font-weight:900}
-.card-note{margin-top:13px;padding:11px;border-radius:12px;background:var(--soft);color:#675a54;font-size:11px}.card-note b{color:var(--deep)}
-.card-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:15px}
-.open,.official{min-height:44px;display:flex;align-items:center;justify-content:center;padding:9px 13px;border-radius:12px;text-decoration:none;font-size:10px;font-weight:950}
-.open{color:#fff;background:linear-gradient(135deg,var(--deep),var(--brand2))}.official{color:var(--deep);border:1px solid var(--line);background:var(--soft)}
-.flow{margin-top:14px;padding:19px;border:1px solid var(--line);border-radius:19px;background:#fff;box-shadow:var(--shadow)}
-.flow-grid{display:grid;grid-template-columns:repeat(var(--flow-cols,5),minmax(0,1fr));gap:8px}
-.flow-step{padding:12px;border-radius:12px;background:var(--soft)}.flow-step b{display:block;color:var(--brand);font-size:10px}.flow-step strong{display:block;margin-top:4px;font-size:11px}.flow-step.same{border:1px dashed #cdbfb6}
-.footer{margin-top:26px;color:#82736c;font-size:10px;text-align:center}
-@media(max-width:900px){.flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.hero{padding:25px 20px}.demo-info,.grid,.flow-grid{grid-template-columns:1fr}}
-@media(max-width:420px){.page{width:min(100% - 16px,1140px)}.card-actions{grid-template-columns:1fr}}
+:root{--bg:#f4f1ee;--card:#fff;--ink:#282522;--muted:#746d68;--line:#e2d9d2;--brand:#247b78;--deep:#17324d;--brand2:#4c9b96;--soft:#eef8f6;--warn:#fff5e5;--shadow:0 16px 46px rgba(44,37,32,.10)}
+*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.65;background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}a{color:inherit}.page{width:min(1140px,calc(100% - 24px));margin:0 auto;padding:20px 0 48px}.hero{position:relative;overflow:hidden;padding:32px;border-radius:28px;color:#fff;background:linear-gradient(135deg,var(--deep),var(--brand) 63%,var(--brand2));box-shadow:0 23px 58px rgba(35,30,27,.20)}.hero:after{content:"";position:absolute;right:-95px;bottom:-150px;width:290px;height:290px;border-radius:50%;background:rgba(255,255,255,.07)}.kicker{position:relative;z-index:1;font-size:11px;font-weight:950;letter-spacing:.14em;opacity:.9}.hero h1{position:relative;z-index:1;margin:10px 0 0;font-size:clamp(28px,5vw,46px);line-height:1.24}.hero p{position:relative;z-index:1;max-width:840px;margin:13px 0 0;font-size:14px;opacity:.94}.hero-actions{position:relative;z-index:1;display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.button{min-height:46px;display:inline-flex;align-items:center;justify-content:center;padding:9px 15px;border-radius:999px;text-decoration:none;font-size:12px;font-weight:950;border:1px solid transparent}.button-light{color:var(--deep);background:#fff}.button-ghost{color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.10)}.button-dark{color:#fff;background:#10283d}a:focus-visible{outline:4px solid #ffcf63;outline-offset:3px}.notice{margin-top:15px;padding:15px 17px;border:1px solid #e5cda3;border-radius:15px;background:var(--warn);color:#725013;font-size:12px;font-weight:760}.status-grid{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.status-grid>div{padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:var(--shadow)}.status-grid small{display:block;color:var(--brand);font-size:9px;font-weight:950;letter-spacing:.08em}.status-grid strong{display:block;margin-top:4px;font-size:14px;overflow-wrap:anywhere}.section-head{margin:32px 0 15px}.section-head small{color:var(--brand);font-size:10px;font-weight:950;letter-spacing:.12em}.section-head h2{margin:5px 0 0;font-size:clamp(23px,4vw,34px)}.section-head p{max-width:900px;margin:7px 0 0;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.card{min-width:0;padding:19px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow)}.card-number{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--brand);font-size:10px;font-weight:950;letter-spacing:.08em}.badge{padding:3px 7px;border-radius:999px;background:var(--soft);color:var(--deep)}.card h3{margin:7px 0 0;font-size:20px;line-height:1.4}.card p{margin:8px 0 0;color:var(--muted);font-size:12px}.meta{margin-top:12px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 9px;padding:11px;border-radius:12px;background:#f5f8f8;font-size:10px}.meta b{color:var(--deep)}.meta code{overflow-wrap:anywhere;color:#40545f}.safe{margin-top:13px;padding:12px 14px;border-left:4px solid var(--brand);border-radius:10px;background:var(--soft);font-size:11px;color:#3b5c59}.footer{margin-top:28px;color:#82736c;font-size:10px;text-align:center}@media(max-width:760px){.hero{padding:25px 20px}.status-grid,.grid{grid-template-columns:1fr}}@media(max-width:420px){.page{width:min(100% - 16px,1140px)}.hero-actions{display:grid;grid-template-columns:1fr}.button{width:100%}}
 </style>
 </head>
 <body>
 <main class="page">
 <section class="hero">
-  <div class="kicker">PUBLIC OPERATION DEMO / V1.0</div>
-  <h1 id="heroTitle"></h1>
-  <p id="heroCopy"></p>
+  <div class="kicker">GUIDE CENTER / FIRST10 / R4</div>
+  <h1>DPRO 行政書士・許認可申請 LINE<br>Guide Center</h1>
+  <p>R3でLIVE検証したFirst10と同じ10件・同じ順序・同じ画面・同じ対象を確認できます。Guide Centerは説明とTutorial起動だけを行い、業務データを自動変更しません。</p>
   <div class="hero-actions">
-    <a class="button button-light" id="officialLink">公式の機能・料金説明を見る</a>
-    <a class="button button-ghost" id="primaryDemoLink">まず体験する</a>
+    <a class="button button-light" id="primaryDemoLink" href="tutorial.html?mode=start">First10を開始</a>
+    <a class="button button-ghost" id="resumeDemoLink" href="tutorial.html?mode=resume">続きからResume</a>
+    <a class="button button-dark" id="replayDemoLink" href="tutorial.html?mode=replay">最初からReplay</a>
+    <a class="button button-ghost" id="officialLink" href="https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html">公式の機能・料金説明</a>
   </div>
 </section>
-
-<div class="notice" id="notice"></div>
-
-<section class="demo-info" id="quickInfo" aria-label="デモ利用情報"></section>
-
-<div class="section-head">
-  <small>CHOOSE A SCREEN</small>
-  <h2>確認する画面を選択</h2>
-  <p id="screenIntro"></p>
-</div>
-
-<section class="grid" id="screenGrid"></section>
-
-<div class="section-head">
-  <small>RECOMMENDED JOURNEY</small>
-  <h2>おすすめの確認順</h2>
-  <p id="journeyIntro"></p>
-</div>
-<section class="flow"><div class="flow-grid" id="flowGrid"></div></section>
-
-<div class="footer" id="footer"></div>
+<div class="notice">公開デモでは実在する氏名・電話番号・メール・法人情報・許認可情報・申請書類を入力しないでください。保存・送信・更新・削除・DEMO PREPAREはFirst10の進行条件ではありません。</div>
+<section class="status-grid" aria-label="Guide Center状態">
+  <div><small>AUTHORITATIVE SOURCE</small><strong>R3 First10 / 10件固定</strong></div>
+  <div><small>SAME TUTORIAL STATE</small><strong id="tutorialState">確認中</strong></div>
+  <div><small>BUSINESS MUTATION</small><strong>0 / frontend guide only</strong></div>
+</section>
+<div class="section-head"><small>FIRST10 ALIGNMENT</small><h2>最初に確認する10項目</h2><p>下記10件はTutorialのGYOSEI-01〜10と1対1で一致します。対象が自動認証済みの場合もTutorial側の安全なfallback/recoveryで復帰します。</p></div>
+<section class="grid" id="screenGrid" aria-label="First10 Guide Center"></section>
+<div class="safe"><strong>安全運用：</strong> Guide Centerは独自の進行状態を持ちません。Start / Resume / Replay はすべて <code>dpro_tutorial_gyosei_v1</code> を使う既存Tutorialへ移動します。</div>
+<div class="footer">DPRO GYOSEI — Guide Center R4 / Tutorial-only frontend layer. Worker・Supabase・DB・Auth・Role・Permission・Feature Flagは変更しません。</div>
 </main>
-
 <script>
-/*
-  DPRO LIVE DEMO COMMON TEMPLATE V1.0
-  ------------------------------------------------------------
-  変更してよいのは CONFIG の値とCSS変数のブランド色のみ。
-  DOM骨格・セクション順・公開注意・CHOOSE A SCREEN・
-  RECOMMENDED JOURNEYはCOMMON TEMPLATE V1.0 LOCK対象。
-*/
-const CONFIG = {
-  "systemName": "DPRO 行政書士・許認可申請 LINE",
-  "pageTitle": "DPRO 行政書士・許認可申請 LINE｜公開操作デモ・画面一覧",
-  "heroCopy": "相談分野を選ぶ受付から、面談・必要書類・案件進捗・期限／更新管理まで。依頼者と事務所の流れを4画面で確認できます。",
-  "officialUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html",
-  "primaryDemoUrl": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/index.html?demo=1",
-  "notice": "公開デモでは実在する氏名・電話番号・メール・法人情報・許認可情報・申請書類を入力せず、必ず架空の内容を使用してください。法的判断や正式な申請判断は専門家が行います。",
-  "screenIntro": "最初に01を確認し、その後おすすめ順に進むと、実際の利用者側と事業所側の流れを短時間で確認できます。",
-  "journeyIntro": "この順番で確認すると、相談受付から案件・現場・書類・期限管理までのつながりを確認できます。",
-  "adminCode": "1234",
-  "quickInfo": [
-    {
-      "label": "CUSTOMER FLOW",
-      "text": "01 相談分野別受付から開始"
-    },
-    {
-      "label": "DEMO INFO",
-      "text": "管理系は demo=1／管理コード1234"
-    },
-    {
-      "label": "SCREEN STRUCTURE",
-      "text": "4画面で相談→案件→期限・更新"
-    }
-  ],
-  "screens": [
-    {
-      "step": "01 / PRIMARY EXPERIENCE",
-      "title": "依頼者｜相談受付（分野別）",
-      "description": "相談分野を選び、お客様情報・相談内容・面談希望を順番に入力。相談前の情報整理を体験できます。",
-      "tags": [
-        "相談分野",
-        "面談希望",
-        "24時間受付"
-      ],
-      "note": "最初にここから確認します。実在情報は入力せず架空データを使用してください。",
-      "url": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/index.html?demo=1",
-      "cta": "相談受付を体験",
-      "officialUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html"
-    },
-    {
-      "step": "02 / CLIENT PORTAL",
-      "title": "依頼者｜案件・必要書類・面談確認",
-      "description": "進行中案件、必要書類、今後の面談、最も近い期限を依頼者側から確認できます。",
-      "tags": [
-        "案件進捗",
-        "必要書類",
-        "面談予定"
-      ],
-      "note": "相談後に「次に何をすればよいか」が依頼者側で見える画面です。",
-      "url": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/member.html?demo=1",
-      "cta": "依頼者画面を開く",
-      "officialUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html"
-    },
-    {
-      "step": "03 / STAFF IPAD",
-      "title": "スタッフiPad｜面談・書類受領・案件進捗",
-      "description": "受付・面談対応、書類受領状態、案件の書類・申請・全体進捗をその場で更新できます。",
-      "tags": [
-        "面談対応",
-        "書類受領",
-        "案件更新"
-      ],
-      "note": "デモ管理コード1234。顧客向け進捗と内部メモを混同しない運用を確認します。",
-      "url": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/owner-ipad.html?demo=1",
-      "cta": "スタッフiPadを開く",
-      "officialUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html"
-    },
-    {
-      "step": "04 / OWNER",
-      "title": "管理PC｜案件・期限・更新管理",
-      "description": "相談、面談、案件、必要書類、申請期限・更新期限を事務所全体で管理します。",
-      "tags": [
-        "案件管理",
-        "期限管理",
-        "更新管理"
-      ],
-      "note": "デモ管理コード1234。期限・更新情報は実務上の確認を前提に扱います。",
-      "url": "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/owner.html?demo=1",
-      "cta": "管理PCを開く",
-      "officialUrl": "https://dpromstk2000-lab.github.io/dpro-line-systems-site/systems/gyosei.html"
-    }
-  ],
-  "journey": [
-    {
-      "step": "01",
-      "text": "分野別相談受付"
-    },
-    {
-      "step": "02",
-      "text": "依頼者が進捗確認"
-    },
-    {
-      "step": "03",
-      "text": "面談・書類・案件更新"
-    },
-    {
-      "step": "04",
-      "text": "期限・更新を管理"
-    }
-  ]
-};
-
-document.documentElement.style.setProperty("--flow-cols", String(Math.min(CONFIG.journey.length, 7)));
-document.title = CONFIG.pageTitle;
-document.getElementById("heroTitle").innerHTML = `${CONFIG.systemName}<br>公開操作デモ・画面一覧`;
-document.getElementById("heroCopy").textContent = CONFIG.heroCopy;
-document.getElementById("officialLink").href = CONFIG.officialUrl;
-document.getElementById("primaryDemoLink").href = CONFIG.primaryDemoUrl;
-document.getElementById("notice").textContent = CONFIG.notice;
-document.getElementById("screenIntro").textContent = CONFIG.screenIntro;
-document.getElementById("journeyIntro").textContent = CONFIG.journeyIntro;
-document.getElementById("footer").textContent = `${CONFIG.systemName}｜PUBLIC OPERATION DEMO V1.0`;
-
-document.getElementById("quickInfo").innerHTML = CONFIG.quickInfo.map(x =>
-  `<div><small>${x.label}</small><strong>${x.text}</strong></div>`
-).join("");
-
-document.getElementById("screenGrid").innerHTML = CONFIG.screens.map(x => `
-  <article class="card">
-    <div class="card-number">${x.step}</div>
-    <h3>${x.title}</h3>
-    <p>${x.description}</p>
-    <div class="pills">${x.tags.map(t => `<span>${t}</span>`).join("")}</div>
-    <div class="card-note">${x.note}</div>
-    <div class="card-actions">
-      <a class="open" href="${x.url}">${x.cta}</a>
-      <a class="official" href="${x.officialUrl}">説明</a>
-    </div>
-  </article>
-`).join("");
-
-document.getElementById("flowGrid").innerHTML = CONFIG.journey.map(x => `
-  <div class="flow-step${x.sameScreen ? " same" : ""}">
-    <b>${x.step}${x.sameScreen ? " / SAME SCREEN" : ""}</b>
-    <strong>${x.text}</strong>
-  </div>
-`).join("");
+(() => {
+  "use strict";
+  const GUIDE_VERSION="GYOSEI-GUIDE-R4-V1.0-20260829";
+  const TUTORIAL_VERSION="GYOSEI-TUTORIAL-R3-V1.1-20260829";
+  const STORAGE_KEY="dpro_tutorial_gyosei_v1";
+  const steps=[{"id":"GYOSEI-01","title":"公開デモの入口を確認","path":"demo-guide.html","primary":"#primaryDemoLink","fallback":".hero-actions .button-ghost","copy":"公開操作デモの入口です。「まず体験する」から相談受付へ進む流れを確認します。"},{"id":"GYOSEI-02","title":"相談分野を選ぶ","path":"index.html?demo=1","primary":"#categoryGrid .category","fallback":"#categoryGrid","copy":"行政書士への相談分野を選択する場所です。ここでは選択箇所だけを確認し、送信は行いません。"},{"id":"GYOSEI-03","title":"相談受付の流れを進める","path":"index.html?demo=1","primary":".step[data-step='1'] [data-next]","fallback":"#consultForm .step.active .btn-primary","copy":"5段階の相談受付を進めるボタンです。最終送信・予約登録はチュートリアル対象外です。"},{"id":"GYOSEI-04","title":"依頼者マイページの状況を確認","path":"member.html?demo=1","primary":"#openCaseCount","fallback":".summary","copy":"進行中案件、必要書類、面談、期限を依頼者側から確認するサマリーです。"},{"id":"GYOSEI-05","title":"進行中案件を見る","path":"member.html?demo=1","primary":"#caseGrid","fallback":".section .case-grid","copy":"案件カードと次の対応を確認する領域です。変更依頼などの業務操作は実行しません。"},{"id":"GYOSEI-06","title":"スタッフiPadへ入る","path":"owner-ipad.html?demo=1","primary":"#adminCode","fallback":"#loginForm","copy":"デモ管理コード1234を入力する場所です。デモ画面が自動認証済みの場合は表示済みのタブ領域へ安全に復帰します。"},{"id":"GYOSEI-07","title":"iPad画面を開く","path":"owner-ipad.html?demo=1","primary":"#loginForm .btn-primary","fallback":"#adminCode","copy":"管理コード入力後にiPad画面を開きます。書類・タスク・案件更新などの業務操作は行いません。"},{"id":"GYOSEI-08","title":"本日・検索・書類・タスクの入口を確認","path":"owner-ipad.html?demo=1","primary":"nav.tabs","fallback":"#gate","copy":"本日・顧客検索・書類受領・タスク・簡易更新の5つの入口を確認します。保存操作は行いません。"},{"id":"GYOSEI-09","title":"管理PCを開く","path":"owner.html?demo=1","primary":"#pageTitle","fallback":"#adminCodeInput","copy":"管理PCのダッシュボードへ移動します。未ログインの場合は管理コード入力画面から復帰できます。"},{"id":"GYOSEI-10","title":"期限・更新管理への導線を確認","path":"owner.html?demo=1","primary":"button.summary-card[data-jump='deadlines']","fallback":"#pageTitle","copy":"ダッシュボードの「未完了の期限」から期限・更新管理へ進む入口です。ここでFirst10は完了です。"}];
+  const grid=document.getElementById("screenGrid");
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  grid.innerHTML=steps.map((s,i)=>`<article class="card" data-guide-id="${esc(s.id)}"><div class="card-number"><span>STEP ${String(i+1).padStart(2,"0")} / 10</span><span class="badge">${esc(s.id)}</span></div><h3>${esc(s.title)}</h3><p>${esc(s.copy)}</p><div class="meta"><b>画面</b><code>${esc(s.path)}</code><b>対象</b><code>${esc(s.primary)}</code><b>代替</b><code>${esc(s.fallback)}</code></div></article>`).join("");
+  function readState(){
+    try{
+      const raw=localStorage.getItem(STORAGE_KEY); if(!raw)return {status:"idle",index:0};
+      const s=JSON.parse(raw); if(s.version!==TUTORIAL_VERSION)return {status:"idle",index:0};
+      return s;
+    }catch(_){return {status:"idle",index:0}}
+  }
+  const state=readState();
+  const text=state.status==="active"?`進行中：STEP ${Number(state.index||0)+1} / 10`:(state.status==="complete"?"完了済み：Replay可能":"未開始：Startから開始");
+  document.getElementById("tutorialState").textContent=text;
+  window.__DPRO_GUIDE__={version:GUIDE_VERSION,tutorialVersion:TUTORIAL_VERSION,storageKey:STORAGE_KEY,count:steps.length,steps:steps.map(s=>({id:s.id,path:s.path,primary:s.primary,fallback:s.fallback})),startHref:"tutorial.html?mode=start",resumeHref:"tutorial.html?mode=resume",replayHref:"tutorial.html?mode=replay",getTutorialState:()=>({...readState()})};
+})();
 </script>
 </body>
 </html>
