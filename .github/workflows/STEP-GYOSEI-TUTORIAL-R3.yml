@@ -54,8 +54,11 @@ jobs:
           set -euo pipefail
           URL="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html"
           ok=0
+          probe_file="$(mktemp)"
+          trap 'rm -f "$probe_file"' EXIT
           for i in $(seq 1 72); do
-            if curl -fsSL --max-time 12 "$URL?deploy_probe=$GITHUB_SHA-$i" | grep -Fq 'GYOSEI-TUTORIAL-R3-V1.1-20260829'; then
+            if curl -fsSL --max-time 12 -o "$probe_file" "$URL?deploy_probe=$GITHUB_SHA-$i" \
+              && grep -Fq 'GYOSEI-TUTORIAL-R3-V1.1-20260829' "$probe_file"; then
               ok=1
               echo "Tutorial deployed on attempt $i"
               break
