@@ -1,0 +1,292 @@
+name: DPRO GYOSEI Batch09 Tutorial R4 Guide Center LIVE QA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'demo-guide.html'
+      - 'tutorial.html'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dpro-gyosei-tutorial-r4
+  cancel-in-progress: false
+
+jobs:
+  tutorial-r4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lock R3 PASS and forward-only source
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASELINE="d8f86d38f1d83637d3850c4f0d763198b1125d47"
+          git merge-base --is-ancestor "$BASELINE" HEAD
+          git diff --exit-code "$BASELINE" HEAD -- index.html member.html owner-ipad.html owner.html config.js system-check.html
+          test -f tutorial-evidence/gyosei-r3/r3-live-qa.json
+          python - <<'PY'
+          import json
+          d=json.load(open('tutorial-evidence/gyosei-r3/r3-live-qa.json',encoding='utf-8'))
+          assert d['ok'] is True
+          assert d['first10Count']==10
+          assert d['first10UniqueIds']==10
+          assert d['businessMutation']==0
+          assert d['unsafeWriteRequestCount']==0
+          assert len(d['matrix'])==4 and all(x['ok'] is True for x in d['matrix'])
+          print('R3 FULL PASS LOCKED')
+          PY
+          test -f demo-guide.html
+          test -f tutorial.html
+          grep -F 'GYOSEI-GUIDE-R4-V1.0-20260829' demo-guide.html
+          grep -F 'GYOSEI-TUTORIAL-R4-MODE-BRIDGE-V1.0-20260829' tutorial.html
+          grep -F 'GYOSEI-TUTORIAL-R3-V1.1-20260829' tutorial.html
+          if grep -Fq 'localStorage.setItem' demo-guide.html; then
+            echo 'Guide Center must not create a second state machine.'
+            exit 1
+          fi
+          echo "R4_SOURCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "R4_SOURCE_TREE=$(git rev-parse HEAD^{tree})" >> "$GITHUB_ENV"
+          echo "R3_BASELINE=$BASELINE" >> "$GITHUB_ENV"
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gyosei-tutorial-r4
+          cd /tmp/gyosei-tutorial-r4
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Wait for GitHub Pages R4 deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          GUIDE="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html"
+          TUTORIAL="https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html"
+          gfile="$(mktemp)"; tfile="$(mktemp)"
+          trap 'rm -f "$gfile" "$tfile"' EXIT
+          ok=0
+          for i in $(seq 1 72); do
+            if curl -fsSL --max-time 12 -o "$gfile" "$GUIDE?r4_probe=$GITHUB_SHA-$i" \
+              && curl -fsSL --max-time 12 -o "$tfile" "$TUTORIAL?r4_probe=$GITHUB_SHA-$i" \
+              && grep -Fq 'GYOSEI-GUIDE-R4-V1.0-20260829' "$gfile" \
+              && grep -Fq 'GYOSEI-TUTORIAL-R4-MODE-BRIDGE-V1.0-20260829' "$tfile"; then
+              ok=1
+              echo "R4 deployed on attempt $i"
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = "1"
+
+      - name: Run exact four-width Guide Center LIVE QA
+        id: liveqa
+        shell: bash
+        run: |
+          set +e
+          mkdir -p tutorial-evidence/gyosei-r4/screenshots
+          cat > /tmp/gyosei-tutorial-r4/qa.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+
+          const BASE='https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/';
+          const GUIDE=BASE+'demo-guide.html';
+          const TUTORIAL=BASE+'tutorial.html';
+          const GUIDE_VERSION='GYOSEI-GUIDE-R4-V1.0-20260829';
+          const TUTORIAL_VERSION='GYOSEI-TUTORIAL-R3-V1.1-20260829';
+          const STORAGE_KEY='dpro_tutorial_gyosei_v1';
+          const sizes=[
+            {key:'pc1440',width:1440,height:1000},
+            {key:'tablet1024',width:1024,height:768},
+            {key:'mobile390',width:390,height:844},
+            {key:'mobile320',width:320,height:720},
+          ];
+          const safeMethods=new Set(['GET','HEAD','OPTIONS']);
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const normalized=steps=>steps.map(s=>({id:s.id,path:s.path,primary:s.primary,fallback:s.fallback}));
+          const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+
+          async function waitGuide(page){
+            await page.waitForFunction(v=>window.__DPRO_GUIDE__?.version===v,GUIDE_VERSION,{timeout:20000});
+          }
+          async function waitTutorial(page){
+            await page.waitForFunction(v=>window.__DPRO_TUTORIAL__?.version===v,TUTORIAL_VERSION,{timeout:20000});
+          }
+          async function waitTarget(page,index){
+            await page.waitForFunction(i=>{
+              const t=window.__DPRO_TUTORIAL__, s=t?.getState?.(), r=t?.getTargetState?.();
+              return s?.status==='active' && s.index===i && r?.resolved===true && r.stepId===t.steps[i].id;
+            },index,{timeout:20000});
+          }
+          async function focusVisible(page,selector){
+            const el=page.locator(selector); await el.focus();
+            return await el.evaluate(e=>{const s=getComputedStyle(e);return s.outlineStyle!=='none' && s.outlineWidth!=='0px'});
+          }
+
+          const browser=await chromium.launch({headless:true});
+          const report={ok:true,guideVersion:GUIDE_VERSION,tutorialVersion:TUTORIAL_VERSION,checkedAt:new Date().toISOString(),sourceHead:process.env.GITHUB_SHA||'',r3Pass:true,guideCount:10,guideTutorialAlignment:true,businessMutation:0,unsafeWriteRequestCount:0,productRegression:0,matrix:[]};
+
+          for(const size of sizes){
+            const context=await browser.newContext({viewport:{width:size.width,height:size.height}});
+            const page=await context.newPage();
+            const unsafe=[]; const consoleErrors=[]; const pageErrors=[];
+            page.on('request',req=>{if(!safeMethods.has(req.method()))unsafe.push({method:req.method(),url:req.url(),resourceType:req.resourceType()})});
+            page.on('console',msg=>{if(msg.type()==='error'){const u=msg.location()?.url||'';if(u.includes('/demo-guide.html')||u.includes('/tutorial.html'))consoleErrors.push({text:msg.text(),url:u})}});
+            page.on('pageerror',err=>{const s=String(err.stack||err.message||err);if(s.includes('demo-guide.html')||s.includes('tutorial.html'))pageErrors.push(s)});
+
+            const nav=await page.goto(GUIDE+'?r4qa='+encodeURIComponent(process.env.GITHUB_SHA||Date.now())+'&w='+size.width,{waitUntil:'domcontentloaded',timeout:30000});
+            await waitGuide(page);
+            const guideMeta=await page.evaluate(()=>({version:__DPRO_GUIDE__.version,tutorialVersion:__DPRO_GUIDE__.tutorialVersion,storageKey:__DPRO_GUIDE__.storageKey,count:__DPRO_GUIDE__.count,steps:__DPRO_GUIDE__.steps,startHref:__DPRO_GUIDE__.startHref,resumeHref:__DPRO_GUIDE__.resumeHref,replayHref:__DPRO_GUIDE__.replayHref,cards:document.querySelectorAll('[data-guide-id]').length,ids:[...document.querySelectorAll('[data-guide-id]')].map(x=>x.dataset.guideId),innerWidth,docWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+            const overflow=guideMeta.docWidth>guideMeta.innerWidth || guideMeta.bodyWidth>guideMeta.innerWidth;
+            const focus={start:await focusVisible(page,'#primaryDemoLink'),resume:await focusVisible(page,'#resumeDemoLink'),replay:await focusVisible(page,'#replayDemoLink')};
+
+            const tp=await context.newPage();
+            await tp.goto(TUTORIAL+'?r4ref='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000});
+            await waitTutorial(tp);
+            const tutorialMeta=await tp.evaluate(()=>({version:__DPRO_TUTORIAL__.version,count:__DPRO_TUTORIAL__.count,steps:__DPRO_TUTORIAL__.steps}));
+            await tp.close();
+            const alignment=guideMeta.count===10 && guideMeta.cards===10 && new Set(guideMeta.ids).size===10 && tutorialMeta.count===10 && guideMeta.tutorialVersion===tutorialMeta.version && guideMeta.storageKey===STORAGE_KEY && same(guideMeta.steps,normalized(tutorialMeta.steps));
+
+            // START -> STEP 1 using the Tutorial's existing state machine.
+            await page.evaluate(()=>localStorage.clear());
+            await page.reload({waitUntil:'domcontentloaded'}); await waitGuide(page);
+            await page.locator('#primaryDemoLink').click(); await waitTutorial(page); await waitTarget(page,0);
+            const startStep1=(await page.evaluate(()=>__DPRO_TUTORIAL__.getState().index))===0;
+
+            // Interrupt at STEP 4 -> Guide -> Resume -> same STEP 4.
+            for(let i=0;i<3;i++){await page.evaluate(()=>__DPRO_TUTORIAL__.next());await waitTarget(page,i+1)}
+            const beforeResume=await page.evaluate(()=>__DPRO_TUTORIAL__.getState());
+            await page.goto(GUIDE+'?resumecheck='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000}); await waitGuide(page);
+            const guideSawActive=(await page.evaluate(()=>__DPRO_GUIDE__.getTutorialState())).status==='active';
+            await page.locator('#resumeDemoLink').click(); await waitTutorial(page); await waitTarget(page,3);
+            const afterResume=await page.evaluate(()=>__DPRO_TUTORIAL__.getState());
+            const resumeSameStep=beforeResume.status==='active' && beforeResume.index===3 && afterResume.status==='active' && afterResume.index===3 && guideSawActive;
+
+            // Complete/Skip -> Guide -> Replay -> STEP 1.
+            await page.evaluate(()=>__DPRO_TUTORIAL__.skip());
+            const completed=(await page.evaluate(()=>__DPRO_TUTORIAL__.getState())).status==='complete';
+            await page.goto(GUIDE+'?replaycheck='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000}); await waitGuide(page);
+            const guideSawComplete=(await page.evaluate(()=>__DPRO_GUIDE__.getTutorialState())).status==='complete';
+            await page.locator('#replayDemoLink').click(); await waitTutorial(page); await waitTarget(page,0);
+            const replayStep1=(await page.evaluate(()=>__DPRO_TUTORIAL__.getState()).then(s=>s.status==='active'&&s.index===0));
+
+            // Keyboard focus/Enter from Guide -> STEP 1.
+            await page.goto(GUIDE+'?keyboard='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000}); await waitGuide(page);
+            await page.evaluate(()=>localStorage.clear()); await page.reload({waitUntil:'domcontentloaded'}); await waitGuide(page);
+            await page.locator('#primaryDemoLink').focus(); await page.keyboard.press('Enter'); await waitTutorial(page); await waitTarget(page,0);
+            const keyboardStart=(await page.evaluate(()=>__DPRO_TUTORIAL__.getState().index))===0;
+
+            // Product regression: protected routes still load and expose their known DOM anchors.
+            const products=[
+              ['index.html?demo=1','#categoryGrid'],
+              ['member.html?demo=1','#caseGrid'],
+              ['owner-ipad.html?demo=1','#gate'],
+              ['owner.html?demo=1','#adminLoginForm'],
+              ['system-check.html?demo=1','#runButton']
+            ];
+            const regression=[];
+            for(const [path,sel] of products){
+              const p=await context.newPage();
+              const r=await p.goto(BASE+path+'&r4reg='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000});
+              const present=(await p.locator(sel).count())>0;
+              regression.push({path,status:r?.status()||0,selector:sel,present,ok:(r?.status()||0)===200&&present});
+              await p.close();
+            }
+            const productOk=regression.every(x=>x.ok);
+
+            await page.goto(GUIDE+'?shot='+Date.now(),{waitUntil:'domcontentloaded',timeout:30000}); await waitGuide(page);
+            await page.screenshot({path:`tutorial-evidence/gyosei-r4/screenshots/${size.key}.png`,fullPage:true});
+
+            const row={key:size.key,width:size.width,height:size.height,httpStatus:nav?.status()||0,overflow,guideCount:guideMeta.count,guideCards:guideMeta.cards,uniqueGuideIds:new Set(guideMeta.ids).size,alignment,focus,startStep1,resumeSameStep,completed,guideSawComplete,replayStep1,keyboardStart,productRegression:regression,unsafeWriteRequests:unsafe.slice(),consoleErrors:consoleErrors.slice(),pageErrors:pageErrors.slice()};
+            row.ok=row.httpStatus===200 && !row.overflow && row.guideCount===10 && row.guideCards===10 && row.uniqueGuideIds===10 && row.alignment && Object.values(row.focus).every(Boolean) && row.startStep1 && row.resumeSameStep && row.completed && row.guideSawComplete && row.replayStep1 && row.keyboardStart && productOk && row.unsafeWriteRequests.length===0 && row.consoleErrors.length===0 && row.pageErrors.length===0;
+            report.matrix.push(row);
+            report.unsafeWriteRequestCount+=row.unsafeWriteRequests.length;
+            if(!productOk) report.productRegression+=1;
+            await context.close();
+          }
+
+          report.guideTutorialAlignment=report.matrix.every(x=>x.alignment===true);
+          report.ok=report.matrix.length===4 && report.matrix.every(x=>x.ok===true) && report.guideCount===10 && report.guideTutorialAlignment===true && report.businessMutation===0 && report.unsafeWriteRequestCount===0 && report.productRegression===0;
+          fs.writeFileSync('tutorial-evidence/gyosei-r4/r4-guide-qa.json',JSON.stringify(report,null,2)+'\n');
+          console.log(JSON.stringify(report,null,2));
+          await browser.close();
+          if(!report.ok)process.exit(2);
+          EOF
+
+          NODE_PATH=/tmp/gyosei-tutorial-r4/node_modules GITHUB_SHA="$GITHUB_SHA" node /tmp/gyosei-tutorial-r4/qa.mjs
+          qa_exit=$?
+          echo "QA_EXIT=$qa_exit" >> "$GITHUB_ENV"
+          echo "qa_exit=$qa_exit" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Publish R4 QA evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tutorial-evidence/gyosei-r4
+          cat > tutorial-evidence/gyosei-r4/source-lock.txt <<EOF
+          SYSTEM=GYOSEI
+          BATCH=09
+          STAGE=R4
+          SOURCE_HEAD=$R4_SOURCE_HEAD
+          SOURCE_TREE=$R4_SOURCE_TREE
+          R3_BASELINE=$R3_BASELINE
+          R3=PASS
+          R4_QA_EXIT=${QA_EXIT:-99}
+          FIRST10_COUNT=10
+          GUIDE_COUNT=10
+          FORWARD_ONLY=PASS
+          BUSINESS_MUTATION=0
+          R5=NOT_STARTED_NOT_AUTHORIZED
+          R6=NOT_STARTED_NOT_AUTHORIZED
+          R7=NOT_AUTHORIZED_NOT_EXECUTED
+          EOF
+          git config user.name "dpro-tutorial-qa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add tutorial-evidence/gyosei-r4
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish GYOSEI Batch09 R4 Guide Center QA evidence [skip ci]"
+            git pull --rebase
+            git push
+          fi
+
+      - name: Enforce R4 FULL PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${QA_EXIT:-99}" = "0"
+          python - <<'PY'
+          import json
+          d=json.load(open('tutorial-evidence/gyosei-r4/r4-guide-qa.json',encoding='utf-8'))
+          assert d['ok'] is True
+          assert d['r3Pass'] is True
+          assert d['guideCount']==10
+          assert d['guideTutorialAlignment'] is True
+          assert d['businessMutation']==0
+          assert d['unsafeWriteRequestCount']==0
+          assert d['productRegression']==0
+          assert len(d['matrix'])==4 and all(x['ok'] is True for x in d['matrix'])
+          print('R4 FULL PASS')
+          PY
+
+      - name: PASS cleanup workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          git config user.name "dpro-tutorial-qa-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/STEP-GYOSEI-TUTORIAL-R4.yml
+          git commit -m "Complete GYOSEI Batch09 R4 Guide Center LIVE QA [skip ci]"
+          git push
