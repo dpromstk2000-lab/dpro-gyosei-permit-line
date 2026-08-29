@@ -1,4 +1,5 @@
 name: DPRO GYOSEI Batch09 Tutorial R5 Manuals LIVE Build QA
+# GYOSEI-R5-PLAYWRIGHT-PY-ARG-FIX-V1.1-20260829
 
 on:
   workflow_dispatch:
@@ -155,18 +156,18 @@ jobs:
               page.on('console',lambda m: console_errors.append(m.text) if m.type=='error' else None)
 
               page.goto(GUIDE+'?r5capture='+SOURCE_HEAD,wait_until='domcontentloaded',timeout=30000)
-              page.wait_for_function("v=>window.__DPRO_GUIDE__?.version===v",GUIDE_VERSION,timeout=20000)
+              page.wait_for_function("v=>window.__DPRO_GUIDE__?.version===v",arg=GUIDE_VERSION,timeout=20000)
               page.screenshot(path=str(SCREENS/'guide-center-live.png'),full_page=False)
 
               page.goto(REPLAY+'&r5capture='+SOURCE_HEAD,wait_until='domcontentloaded',timeout=30000)
-              page.wait_for_function("v=>window.__DPRO_TUTORIAL__?.version===v",VERSION,timeout=20000)
+              page.wait_for_function("v=>window.__DPRO_TUTORIAL__?.version===v",arg=VERSION,timeout=20000)
               page.wait_for_function("()=>window.__DPRO_TUTORIAL__?.getState?.().status==='active'",timeout=20000)
 
               for i,(sid,*_) in enumerate(steps):
                   page.wait_for_function("""i=>{
                     const t=window.__DPRO_TUTORIAL__,s=t?.getState?.(),r=t?.getTargetState?.();
                     return s?.status==='active'&&s.index===i&&r?.resolved===true&&r.stepId===t.steps[i].id;
-                  }""",i,timeout=25000)
+                  }""",arg=i,timeout=25000)
                   assert page.locator('#tutorialCard').is_visible()
                   page.locator('#tutorialCard').screenshot(path=str(SCREENS/f'{sid}.png'))
                   if i<9:
