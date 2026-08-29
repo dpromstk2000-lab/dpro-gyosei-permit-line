@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#17324d">
+<link rel="icon" href="data:,">
+<title>DPRO GYOSEI｜操作チュートリアル</title>
+<style>
+:root{--navy:#17324d;--teal:#247b78;--bg:#eef3f2;--card:#fff;--text:#17212b;--muted:#617180;--line:#d5e0e2;--accent:#ffb000;--danger:#b42318;--shadow:0 18px 55px rgba(16,40,61,.24)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif}
+button{font:inherit}
+.shell{position:fixed;inset:0;display:grid;grid-template-rows:52px minmax(0,1fr);background:var(--bg)}
+.topbar{display:flex;align-items:center;gap:10px;padding:7px 12px;background:#10283d;color:#fff;border-bottom:1px solid rgba(255,255,255,.12);z-index:20}
+.brand{font-weight:900;letter-spacing:.02em;white-space:nowrap}
+.brand small{font-weight:650;color:#c9dbe0;margin-left:8px}
+.status{margin-left:auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d7e7ea;font-size:12px}
+.frame-wrap{position:relative;min-width:0;min-height:0;background:#fff}
+iframe{display:block;width:100%;height:100%;border:0;background:#fff}
+.launcher{position:fixed;z-index:70;right:14px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.launcher.hidden{display:none}
+.launch-btn{min-height:46px;border:0;border-radius:999px;padding:10px 16px;font-weight:900;box-shadow:var(--shadow);cursor:pointer}
+.launch-btn.start,.launch-btn.resume{background:var(--teal);color:#fff}.launch-btn.replay{background:var(--navy);color:#fff}
+.card{position:fixed;z-index:80;left:18px;top:70px;width:min(410px,calc(100vw - 20px));max-height:min(620px,calc(100vh - 20px));display:grid;grid-template-rows:auto minmax(0,1fr);background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.card.hidden{display:none}
+.handle{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 12px;background:linear-gradient(135deg,var(--navy),#1c4b5a 75%,var(--teal));color:#fff;cursor:grab;touch-action:none;user-select:none}
+.handle:active{cursor:grabbing}
+.grip{font-size:20px;letter-spacing:-3px;opacity:.85}.handle strong{font-size:14px}.handle span{font-size:11px;color:#d9eaed}
+.close{margin-left:auto;width:38px;height:38px;border:1px solid rgba(255,255,255,.3);border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-size:21px;cursor:pointer}
+.body{overflow:auto;padding:15px}
+.kicker{color:var(--teal);font-size:11px;font-weight:950;letter-spacing:.12em}
+.title{margin:5px 0 7px;color:var(--navy);font-size:22px;line-height:1.35}
+.copy{margin:0;color:#415762;font-size:14px;line-height:1.7}
+.meta{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 9px;margin:12px 0 0;padding:10px 11px;border-radius:12px;background:#f3f7f7;font-size:11px}
+.meta b{color:var(--navy)}.meta code{overflow-wrap:anywhere;color:#40545f}
+.resolve{margin-top:11px;padding:9px 11px;border:1px solid #cfe2df;border-radius:11px;background:#eff8f6;color:#315e59;font-size:12px;font-weight:800}
+.resolve.warn{border-color:#edce9e;background:#fff7e9;color:#765018}
+.progress{height:6px;margin-top:13px;border-radius:999px;background:#e6ecee;overflow:hidden}.progress i{display:block;height:100%;background:var(--teal);transition:.2s}
+.actions{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;margin-top:13px}
+.btn{min-height:44px;border:0;border-radius:11px;padding:9px 12px;font-weight:900;cursor:pointer}
+.btn:focus-visible,.launch-btn:focus-visible,.close:focus-visible{outline:4px solid #ffcf63;outline-offset:2px}
+.btn.back{background:#eef2f3;color:#465b66}.btn.skip{background:#fff1ef;color:var(--danger);border:1px solid #edc3be}.btn.next{background:var(--teal);color:#fff}
+.hint{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.55}
+.sr{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:680px){
+  .shell{grid-template-rows:46px minmax(0,1fr)}.topbar{padding:6px 8px}.brand{font-size:13px}.brand small{display:none}.status{font-size:10px}
+  .card{left:8px;top:54px;width:calc(100vw - 16px);max-height:calc(100vh - 62px);border-radius:15px}
+  .handle{min-height:48px;padding:8px 10px}.body{padding:13px}.title{font-size:19px}.copy{font-size:13px}
+  .meta{font-size:10px}.actions{grid-template-columns:1fr 1fr}.btn.back{grid-column:1}.btn.skip{grid-column:2}.btn.next{grid-column:1/-1}
+  .launcher{right:8px;bottom:8px;left:8px}.launch-btn{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">DPRO GYOSEI <small>操作チュートリアル</small></div>
+    <div id="topStatus" class="status">準備完了</div>
+  </header>
+  <div class="frame-wrap"><iframe id="productFrame" title="DPRO GYOSEI デモ画面"></iframe></div>
+</div>
+
+<div id="launcher" class="launcher">
+  <button id="startButton" class="launch-btn start" type="button">チュートリアル開始</button>
+  <button id="resumeButton" class="launch-btn resume" type="button" hidden>続きから再開</button>
+  <button id="replayButton" class="launch-btn replay" type="button" hidden>最初からリプレイ</button>
+</div>
+
+<section id="tutorialCard" class="card hidden" role="dialog" aria-modal="false" aria-labelledby="tutorialTitle">
+  <div id="dragHandle" class="handle" data-testid="drag-handle">
+    <div class="grip" aria-hidden="true">⠿</div>
+    <div><strong>操作チュートリアル</strong><br><span>ここをドラッグして移動</span></div>
+    <button id="closeButton" class="close" type="button" aria-label="チュートリアルを閉じる">×</button>
+  </div>
+  <div class="body">
+    <div id="stepKicker" class="kicker">STEP 01 / 10</div>
+    <h1 id="tutorialTitle" class="title">公開デモの入口を確認</h1>
+    <p id="stepCopy" class="copy"></p>
+    <div class="meta">
+      <b>画面</b><code id="stepPage"></code>
+      <b>対象</b><code id="stepSelector"></code>
+      <b>代替</b><code id="stepFallback"></code>
+    </div>
+    <div id="resolveState" class="resolve" role="status" aria-live="polite">対象画面を確認しています…</div>
+    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+    <div class="actions">
+      <button id="backButton" class="btn back" type="button">戻る</button>
+      <button id="skipButton" class="btn skip" type="button">スキップ</button>
+      <button id="nextButton" class="btn next" type="button">次へ</button>
+    </div>
+    <p class="hint">キーボード: Tab / Enter、Alt+← 戻る、Alt+→ 次へ、Esc 閉じる。実データの送信・保存・更新は行いません。</p>
+  </div>
+</section>
+
+<div id="liveMessage" class="sr" aria-live="assertive"></div>
+
+<script>
+(() => {
+  "use strict";
+  const VERSION = "GYOSEI-TUTORIAL-R3-V1.0-20260829";
+  const STORE_KEY = "dpro_tutorial_gyosei_v1";
+  const CARD_POS_KEY = STORE_KEY + "_card";
+  const ADMIN_SESSION_KEY = "dpro_gyosei_admin_code";
+  const BASE = new URL("./", location.href);
+  const $ = (s) => document.querySelector(s);
+
+  const steps = [
+    {id:"GYOSEI-01",title:"公開デモの入口を確認",path:"demo-guide.html",primary:"#primaryDemoLink",fallback:".hero-actions .button-ghost",copy:"公開操作デモの入口です。「まず体験する」から相談受付へ進む流れを確認します。"},
+    {id:"GYOSEI-02",title:"相談分野を選ぶ",path:"index.html?demo=1",primary:"#categoryGrid .category",fallback:"#categoryGrid",copy:"行政書士への相談分野を選択する場所です。ここでは選択箇所だけを確認し、送信は行いません。"},
+    {id:"GYOSEI-03",title:"相談受付の流れを進める",path:"index.html?demo=1",primary:".step[data-step='1'] [data-next]",fallback:"#consultForm .step.active .btn-primary",copy:"5段階の相談受付を進めるボタンです。最終送信・予約登録はチュートリアル対象外です。"},
+    {id:"GYOSEI-04",title:"依頼者マイページの状況を確認",path:"member.html?demo=1",primary:"#openCaseCount",fallback:".summary",copy:"進行中案件、必要書類、面談、期限を依頼者側から確認するサマリーです。"},
+    {id:"GYOSEI-05",title:"進行中案件を見る",path:"member.html?demo=1",primary:"#caseGrid",fallback:".section .case-grid",copy:"案件カードと次の対応を確認する領域です。変更依頼などの業務操作は実行しません。"},
+    {id:"GYOSEI-06",title:"スタッフiPadへ入る",path:"owner-ipad.html?demo=1",primary:"#adminCode",fallback:"#loginForm",copy:"デモ管理コード 1234 を入力する場所です。コードはブラウザのセッションだけに保持されます。"},
+    {id:"GYOSEI-07",title:"iPad画面を開く",path:"owner-ipad.html?demo=1",primary:"#loginForm .btn-primary",fallback:"#adminCode",copy:"管理コード入力後にiPad画面を開きます。ログイン後の読込だけを確認し、書類・タスク・案件更新は行いません。"},
+    {id:"GYOSEI-08",title:"本日・検索・書類・タスクの入口を確認",path:"owner-ipad.html?demo=1",primary:"nav.tabs",fallback:"#gate",copy:"本日・顧客検索・書類受領・タスク・簡易更新の5つの入口を確認します。保存操作は行いません。"},
+    {id:"GYOSEI-09",title:"管理PCを開く",path:"owner.html?demo=1",primary:"#pageTitle",fallback:"#adminCodeInput",copy:"管理PCのダッシュボードへ移動します。未ログインの場合は管理コード入力画面から復帰できます。"},
+    {id:"GYOSEI-10",title:"期限・更新管理への導線を確認",path:"owner.html?demo=1",primary:"button.summary-card[data-jump='deadlines']",fallback:"#pageTitle",copy:"ダッシュボードの「未完了の期限」から期限・更新管理へ進む入口です。ここでFirst10は完了です。"}
+  ];
+
+  const frame = $("#productFrame");
+  const card = $("#tutorialCard");
+  const launcher = $("#launcher");
+  const startButton = $("#startButton");
+  const resumeButton = $("#resumeButton");
+  const replayButton = $("#replayButton");
+  const nextButton = $("#nextButton");
+  const backButton = $("#backButton");
+  const skipButton = $("#skipButton");
+  const closeButton = $("#closeButton");
+  const dragHandle = $("#dragHandle");
+  const topStatus = $("#topStatus");
+  let state = loadState();
+  let resolveToken = 0;
+  let highlighted = null;
+  let lastResolution = null;
+  let drag = null;
+
+  function defaultState(){ return {status:"idle",index:0,updatedAt:Date.now(),version:VERSION}; }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      if(parsed.version !== VERSION) return defaultState();
+      parsed.index = Math.max(0, Math.min(steps.length-1, Number(parsed.index)||0));
+      return parsed;
+    }catch(_){ return defaultState(); }
+  }
+  function saveState(){
+    state.updatedAt=Date.now();state.version=VERSION;
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(_){}
+    updateLauncher();
+  }
+  function updateLauncher(){
+    const active = state.status === "active";
+    const done = state.status === "complete";
+    startButton.hidden = active || done;
+    resumeButton.hidden = !active;
+    replayButton.hidden = !done;
+  }
+  function current(){ return steps[state.index]; }
+  function urlFor(path){ return new URL(path, BASE).href; }
+  function sameFramePath(path){
+    try{
+      const a = new URL(frame.src || "about:blank", location.href);
+      const b = new URL(urlFor(path));
+      return a.origin===b.origin && a.pathname===b.pathname && a.search===b.search;
+    }catch(_){return false}
+  }
+  function announce(text){ $("#liveMessage").textContent=text; topStatus.textContent=text; }
+  function showCard(){
+    card.classList.remove("hidden");
+    launcher.classList.add("hidden");
+    clampCard();
+  }
+  function hideCard(){
+    card.classList.add("hidden");
+    launcher.classList.remove("hidden");
+    updateLauncher();
+    announce("チュートリアルを閉じました。続きから再開できます。");
+    const btn = state.status==="complete" ? replayButton : (state.status==="active" ? resumeButton : startButton);
+    setTimeout(()=>btn.focus(),0);
+  }
+  function start(replay=false){
+    state={status:"active",index:0,updatedAt:Date.now(),version:VERSION};
+    saveState();showCard();renderStep();
+    announce(replay ? "リプレイを開始しました。STEP 1です。" : "チュートリアルを開始しました。STEP 1です。");
+  }
+  function resume(){
+    if(state.status!=="active"){ start(false); return; }
+    showCard();renderStep();announce(`STEP ${state.index+1} から再開しました。`);
+  }
+  function complete(kind="complete"){
+    state.status="complete";state.index=steps.length-1;saveState();
+    clearHighlight();
+    hideCard();
+    announce(kind==="skip" ? "チュートリアルをスキップしました。リプレイできます。" : "First10を完了しました。リプレイできます。");
+  }
+  function next(){
+    if(state.index >= steps.length-1){ complete("complete"); return; }
+    state.index += 1;state.status="active";saveState();renderStep();
+  }
+  function back(){
+    if(state.index <= 0){ announce("最初のステップです。"); return; }
+    state.index -= 1;state.status="active";saveState();renderStep();
+  }
+  function renderStep(){
+    const step=current();
+    $("#stepKicker").textContent=`STEP ${String(state.index+1).padStart(2,"0")} / ${steps.length}`;
+    $("#tutorialTitle").textContent=step.title;
+    $("#stepCopy").textContent=step.copy;
+    $("#stepPage").textContent=step.path;
+    $("#stepSelector").textContent=step.primary;
+    $("#stepFallback").textContent=step.fallback;
+    $("#progressBar").style.width=`${((state.index+1)/steps.length)*100}%`;
+    backButton.disabled=state.index===0;
+    nextButton.textContent=state.index===steps.length-1 ? "完了" : "次へ";
+    setResolveState("対象画面を確認しています…",false);
+    clearHighlight();
+    lastResolution = null;
+    const targetUrl=urlFor(step.path);
+    if(!sameFramePath(step.path)){
+      frame.src=targetUrl;
+    }else{
+      resolveTarget(step);
+    }
+    announce(`STEP ${state.index+1} / ${steps.length}：${step.title}`);
+  }
+  function setResolveState(text,warn){
+    const el=$("#resolveState");el.textContent=text;el.classList.toggle("warn",!!warn);
+  }
+  function visible(el){
+    if(!el || !el.isConnected) return false;
+    const win=el.ownerDocument.defaultView;
+    const cs=win.getComputedStyle(el);
+    if(cs.display==="none"||cs.visibility==="hidden"||Number(cs.opacity)===0) return false;
+    const r=el.getBoundingClientRect();
+    return r.width>0 && r.height>0;
+  }
+  function clearHighlight(){
+    if(!highlighted) return;
+    try{
+      const {el,outline,outlineOffset,boxShadow,borderRadius,tabindex,hadTabindex}=highlighted;
+      el.style.outline=outline;el.style.outlineOffset=outlineOffset;el.style.boxShadow=boxShadow;el.style.borderRadius=borderRadius;
+      el.removeAttribute("data-dpro-tutorial-target");
+      if(!hadTabindex) el.removeAttribute("tabindex"); else el.setAttribute("tabindex",tabindex);
+    }catch(_){}
+    highlighted=null;
+  }
+  function installFrameHelpers(doc){
+    try{
+      if(doc.getElementById("dpro-tutorial-frame-style")) return;
+      const st=doc.createElement("style");st.id="dpro-tutorial-frame-style";
+      st.textContent='[data-dpro-tutorial-target="1"]:focus{outline:4px solid #ffb000!important;outline-offset:4px!important}';
+      doc.head.appendChild(st);
+      doc.addEventListener("keydown",(e)=>{
+        if(e.key==="Escape"){e.preventDefault();hideCard();return}
+        if(e.altKey && e.key==="ArrowRight"){e.preventDefault();next();return}
+        if(e.altKey && e.key==="ArrowLeft"){e.preventDefault();back();return}
+      },true);
+    }catch(_){}
+  }
+  function highlight(el){
+    clearHighlight();
+    const had=el.hasAttribute("tabindex");
+    const oldTab=el.getAttribute("tabindex");
+    highlighted={
+      el,
+      outline:el.style.outline,
+      outlineOffset:el.style.outlineOffset,
+      boxShadow:el.style.boxShadow,
+      borderRadius:el.style.borderRadius,
+      tabindex:oldTab,
+      hadTabindex:had
+    };
+    el.setAttribute("data-dpro-tutorial-target","1");
+    el.style.outline="4px solid #ffb000";
+    el.style.outlineOffset="4px";
+    el.style.boxShadow="0 0 0 7px rgba(255,176,0,.22)";
+    if(!had) el.setAttribute("tabindex","-1");
+    try{el.scrollIntoView({block:"center",inline:"center",behavior:"smooth"})}catch(_){el.scrollIntoView()}
+    setTimeout(()=>{try{el.focus({preventScroll:true})}catch(_){try{el.focus()}catch(__){}}},120);
+  }
+  function resolveTarget(step){
+    const token=++resolveToken;
+    let tries=0;
+    const attempt=()=>{
+      if(token!==resolveToken || step!==current()) return;
+      tries++;
+      let doc;
+      try{doc=frame.contentDocument}catch(_){doc=null}
+      if(!doc){
+        if(tries<50) return setTimeout(attempt,200);
+        setResolveState("画面へアクセスできません。再読み込み後に「続きから再開」を使用してください。",true);return;
+      }
+      installFrameHelpers(doc);
+      const primary=doc.querySelector(step.primary);
+      const fallback=doc.querySelector(step.fallback);
+      let target=null,used="primary";
+      if(visible(primary)) target=primary;
+      else if(visible(fallback)){target=fallback;used="fallback"}
+      if(target){
+        lastResolution={stepId:step.id,used,selector:used==="primary"?step.primary:step.fallback};
+        highlight(target);
+        setResolveState(used==="primary" ? "対象を確認しました。黄色の枠が案内箇所です。" : "代替の安全な表示箇所を使用しています。",used!=="primary");
+        return;
+      }
+      if(tries<60) return setTimeout(attempt,250);
+      lastResolution={stepId:step.id,used:"unresolved",selector:null};
+      setResolveState("対象が現在表示されていません。「戻る」で認証ステップへ戻るか、閉じて再開してください。",true);
+      nextButton.focus();
+    };
+    attempt();
+  }
+
+  frame.addEventListener("load",()=>{
+    clearHighlight();
+    try{
+      const doc=frame.contentDocument;
+      installFrameHelpers(doc);
+      if(state.status==="active") resolveTarget(current());
+    }catch(_){
+      setResolveState("対象画面の読み込みを確認できませんでした。",true);
+    }
+  });
+
+  startButton.addEventListener("click",()=>start(false));
+  resumeButton.addEventListener("click",resume);
+  replayButton.addEventListener("click",()=>start(true));
+  nextButton.addEventListener("click",next);
+  backButton.addEventListener("click",back);
+  skipButton.addEventListener("click",()=>complete("skip"));
+  closeButton.addEventListener("click",hideCard);
+
+  window.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape" && !card.classList.contains("hidden")){e.preventDefault();hideCard();return}
+    if(card.classList.contains("hidden")) return;
+    if(e.altKey && e.key==="ArrowRight"){e.preventDefault();next();return}
+    if(e.altKey && e.key==="ArrowLeft"){e.preventDefault();back();return}
+  },true);
+
+  function cardPos(){
+    const r=card.getBoundingClientRect();
+    return {left:r.left,top:r.top,width:r.width,height:r.height};
+  }
+  function clamp(v,min,max){return Math.min(Math.max(v,min),Math.max(min,max))}
+  function clampCard(){
+    if(card.classList.contains("hidden")) return;
+    const r=card.getBoundingClientRect();
+    const margin=8;
+    const left=clamp(r.left,margin,innerWidth-r.width-margin);
+    const top=clamp(r.top,margin,innerHeight-r.height-margin);
+    card.style.left=`${left}px`;card.style.top=`${top}px`;
+    saveCardPos(left,top);
+  }
+  function saveCardPos(left,top){try{localStorage.setItem(CARD_POS_KEY,JSON.stringify({left,top}))}catch(_){}}
+  function restoreCardPos(){
+    try{
+      const p=JSON.parse(localStorage.getItem(CARD_POS_KEY)||"null");
+      if(p && Number.isFinite(p.left)&&Number.isFinite(p.top)){card.style.left=`${p.left}px`;card.style.top=`${p.top}px`}
+    }catch(_){}
+  }
+  dragHandle.addEventListener("pointerdown",(e)=>{
+    if(e.button!==undefined && e.button!==0) return;
+    if(e.target.closest("button")) return;
+    const p=cardPos();
+    drag={id:e.pointerId,startX:e.clientX,startY:e.clientY,left:p.left,top:p.top};
+    try{dragHandle.setPointerCapture(e.pointerId)}catch(_){}
+    e.preventDefault();
+  });
+  window.addEventListener("pointermove",(e)=>{
+    if(!drag || (e.pointerId!==undefined && drag.id!==undefined && e.pointerId!==drag.id)) return;
+    const r=card.getBoundingClientRect(), margin=8;
+    const left=clamp(drag.left+(e.clientX-drag.startX),margin,innerWidth-r.width-margin);
+    const top=clamp(drag.top+(e.clientY-drag.startY),margin,innerHeight-r.height-margin);
+    card.style.left=`${left}px`;card.style.top=`${top}px`;
+    e.preventDefault();
+  },{passive:false});
+  window.addEventListener("pointerup",(e)=>{
+    if(!drag || (e.pointerId!==undefined && drag.id!==undefined && e.pointerId!==drag.id)) return;
+    const r=card.getBoundingClientRect();saveCardPos(r.left,r.top);drag=null;
+  });
+  window.addEventListener("pointercancel",()=>{drag=null});
+  window.addEventListener("resize",clampCard);
+
+  window.__DPRO_TUTORIAL__={
+    version:VERSION,
+    count:steps.length,
+    steps:steps.map(s=>({...s})),
+    getState:()=>({...state}),
+    getTargetState:()=>({
+      resolved:!!highlighted,
+      selector:highlighted?.el?.getAttribute("data-dpro-tutorial-target")==="1",
+      tag:highlighted?.el?.tagName||null,
+      used:lastResolution?.used||null,
+      matchedSelector:lastResolution?.selector||null,
+      stepId:lastResolution?.stepId||null
+    }),
+    next,back,resume,replay:()=>start(true),skip:()=>complete("skip"),
+    cardRect:()=>{const r=card.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}},
+    adminSessionKey:ADMIN_SESSION_KEY
+  };
+
+  restoreCardPos();
+  updateLauncher();
+  frame.src=urlFor("demo-guide.html");
+  if(state.status==="active"){
+    announce(`前回の STEP ${state.index+1} から再開できます。`);
+  }else if(state.status==="complete"){
+    announce("First10完了済みです。最初からリプレイできます。");
+  }else{
+    announce("操作チュートリアルを開始できます。");
+  }
+})();
+</script>
+</body>
+</html>
