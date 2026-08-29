@@ -1,0 +1,7 @@
+GYOSEI R5 PRIVACY / SAFETY
+Retained screenshots are Guide Center or cropped Tutorial cards only.
+No real client/case/document/contact/appointment data is retained.
+No consultation/appointment submission, save/update/delete/status/settings/demo-prepare operation was executed.
+PII_SENSITIVE_DATA=0
+SECRETS_CREDENTIALS=0
+BUSINESS_MUTATION=0

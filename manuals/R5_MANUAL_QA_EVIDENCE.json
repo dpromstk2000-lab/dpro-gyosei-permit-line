@@ -1,0 +1,169 @@
+{
+  "system": "GYOSEI",
+  "batch": "09",
+  "stage": "R5",
+  "sourceHead": "970d8d72a998337b26d3d32b1abb83b8e105e530",
+  "sourceTree": "d05dbd876971dbef10677c55ca68e615e58f4776",
+  "r4CentralAccepted": true,
+  "first10Count": 10,
+  "guideCount": 10,
+  "quick": {
+    "pdf": "manuals/DPRO_TUTORIAL_GYOSEI_QUICK_START_V1.0.pdf",
+    "pages": 1,
+    "a4Portrait": true,
+    "renderedPages": [
+      "manuals/rendered/quick/page-01.png"
+    ],
+    "qrDecoded": [
+      {
+        "file": "manuals/rendered/quick/page-01.png",
+        "decoded": [
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html",
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html?mode=start"
+        ]
+      }
+    ]
+  },
+  "detailed": {
+    "pdf": "manuals/DPRO_TUTORIAL_GYOSEI_DETAILED_MANUAL_V1.0.pdf",
+    "pages": 6,
+    "a4Portrait": true,
+    "renderedPages": [
+      "manuals/rendered/detail/page-01.png",
+      "manuals/rendered/detail/page-02.png",
+      "manuals/rendered/detail/page-03.png",
+      "manuals/rendered/detail/page-04.png",
+      "manuals/rendered/detail/page-05.png",
+      "manuals/rendered/detail/page-06.png"
+    ],
+    "qrDecoded": [
+      {
+        "file": "manuals/rendered/detail/page-01.png",
+        "decoded": []
+      },
+      {
+        "file": "manuals/rendered/detail/page-02.png",
+        "decoded": []
+      },
+      {
+        "file": "manuals/rendered/detail/page-03.png",
+        "decoded": []
+      },
+      {
+        "file": "manuals/rendered/detail/page-04.png",
+        "decoded": []
+      },
+      {
+        "file": "manuals/rendered/detail/page-05.png",
+        "decoded": []
+      },
+      {
+        "file": "manuals/rendered/detail/page-06.png",
+        "decoded": [
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html?mode=resume",
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html?mode=start",
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/tutorial.html?mode=replay",
+          "https://dpromstk2000-lab.github.io/dpro-gyosei-permit-line/demo-guide.html"
+        ]
+      }
+    ]
+  },
+  "liveScreenshots": [
+    "manuals/screens/GYOSEI-01.png",
+    "manuals/screens/GYOSEI-02.png",
+    "manuals/screens/GYOSEI-03.png",
+    "manuals/screens/GYOSEI-04.png",
+    "manuals/screens/GYOSEI-05.png",
+    "manuals/screens/GYOSEI-06.png",
+    "manuals/screens/GYOSEI-07.png",
+    "manuals/screens/GYOSEI-08.png",
+    "manuals/screens/GYOSEI-09.png",
+    "manuals/screens/GYOSEI-10.png",
+    "manuals/screens/guide-center-live.png"
+  ],
+  "visualAutomatedPreflight": [
+    {
+      "file": "manuals/rendered/quick/page-01.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.5737698595303137,
+      "darkRatio": 0.14397987691723876,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-01.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.8214242649125467,
+      "darkRatio": 0.13752627766414063,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-02.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.8197347806773719,
+      "darkRatio": 0.13939153741735447,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-03.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.8238301507546599,
+      "darkRatio": 0.1370592423343698,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-04.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.8257486086470028,
+      "darkRatio": 0.13682539218111484,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-05.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.8207105232125647,
+      "darkRatio": 0.13931949827061715,
+      "nonBlank": true
+    },
+    {
+      "file": "manuals/rendered/detail/page-06.png",
+      "size": [
+        1786,
+        2526
+      ],
+      "whiteRatio": 0.4904274381815457,
+      "darkRatio": 0.13891763066127946,
+      "nonBlank": true
+    }
+  ],
+  "qrExactPublic": true,
+  "piiSensitiveData": 0,
+  "secretsCredentials": 0,
+  "businessMutation": 0,
+  "unsafeWriteRequestCount": 0,
+  "clippingDetected": 0,
+  "missingGlyphDetected": 0,
+  "brokenImageDetected": 0,
+  "overlapDetected": 0,
+  "unreadableDetected": 0,
+  "accidentalBlankDetected": 0,
+  "manualVisualQa": "PENDING_ASSISTANT_RENDER_INSPECTION",
+  "r5AutomatedQa": "PASS"
+}
