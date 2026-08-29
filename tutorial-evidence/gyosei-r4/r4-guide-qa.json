@@ -1,0 +1,267 @@
+{
+  "ok": true,
+  "guideVersion": "GYOSEI-GUIDE-R4-V1.0-20260829",
+  "tutorialVersion": "GYOSEI-TUTORIAL-R3-V1.1-20260829",
+  "checkedAt": "2026-08-29T12:02:56.765Z",
+  "sourceHead": "e6cfaf5a781a71d6a8c9a7ef03938ce7d4cf58ab",
+  "r3Pass": true,
+  "guideCount": 10,
+  "guideTutorialAlignment": true,
+  "businessMutation": 0,
+  "unsafeWriteRequestCount": 0,
+  "productRegression": 0,
+  "matrix": [
+    {
+      "key": "pc1440",
+      "width": 1440,
+      "height": 1000,
+      "httpStatus": 200,
+      "overflow": false,
+      "guideCount": 10,
+      "guideCards": 10,
+      "uniqueGuideIds": 10,
+      "alignment": true,
+      "focus": {
+        "start": true,
+        "resume": true,
+        "replay": true
+      },
+      "startStep1": true,
+      "resumeSameStep": true,
+      "completed": true,
+      "guideSawComplete": true,
+      "replayStep1": true,
+      "keyboardStart": true,
+      "productRegression": [
+        {
+          "path": "index.html?demo=1",
+          "status": 200,
+          "selector": "#categoryGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "member.html?demo=1",
+          "status": 200,
+          "selector": "#caseGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner-ipad.html?demo=1",
+          "status": 200,
+          "selector": "#gate",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner.html?demo=1",
+          "status": 200,
+          "selector": "#adminLoginForm",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "system-check.html?demo=1",
+          "status": 200,
+          "selector": "#runButton",
+          "present": true,
+          "ok": true
+        }
+      ],
+      "unsafeWriteRequests": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "ok": true
+    },
+    {
+      "key": "tablet1024",
+      "width": 1024,
+      "height": 768,
+      "httpStatus": 200,
+      "overflow": false,
+      "guideCount": 10,
+      "guideCards": 10,
+      "uniqueGuideIds": 10,
+      "alignment": true,
+      "focus": {
+        "start": true,
+        "resume": true,
+        "replay": true
+      },
+      "startStep1": true,
+      "resumeSameStep": true,
+      "completed": true,
+      "guideSawComplete": true,
+      "replayStep1": true,
+      "keyboardStart": true,
+      "productRegression": [
+        {
+          "path": "index.html?demo=1",
+          "status": 200,
+          "selector": "#categoryGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "member.html?demo=1",
+          "status": 200,
+          "selector": "#caseGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner-ipad.html?demo=1",
+          "status": 200,
+          "selector": "#gate",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner.html?demo=1",
+          "status": 200,
+          "selector": "#adminLoginForm",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "system-check.html?demo=1",
+          "status": 200,
+          "selector": "#runButton",
+          "present": true,
+          "ok": true
+        }
+      ],
+      "unsafeWriteRequests": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "ok": true
+    },
+    {
+      "key": "mobile390",
+      "width": 390,
+      "height": 844,
+      "httpStatus": 200,
+      "overflow": false,
+      "guideCount": 10,
+      "guideCards": 10,
+      "uniqueGuideIds": 10,
+      "alignment": true,
+      "focus": {
+        "start": true,
+        "resume": true,
+        "replay": true
+      },
+      "startStep1": true,
+      "resumeSameStep": true,
+      "completed": true,
+      "guideSawComplete": true,
+      "replayStep1": true,
+      "keyboardStart": true,
+      "productRegression": [
+        {
+          "path": "index.html?demo=1",
+          "status": 200,
+          "selector": "#categoryGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "member.html?demo=1",
+          "status": 200,
+          "selector": "#caseGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner-ipad.html?demo=1",
+          "status": 200,
+          "selector": "#gate",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner.html?demo=1",
+          "status": 200,
+          "selector": "#adminLoginForm",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "system-check.html?demo=1",
+          "status": 200,
+          "selector": "#runButton",
+          "present": true,
+          "ok": true
+        }
+      ],
+      "unsafeWriteRequests": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "ok": true
+    },
+    {
+      "key": "mobile320",
+      "width": 320,
+      "height": 720,
+      "httpStatus": 200,
+      "overflow": false,
+      "guideCount": 10,
+      "guideCards": 10,
+      "uniqueGuideIds": 10,
+      "alignment": true,
+      "focus": {
+        "start": true,
+        "resume": true,
+        "replay": true
+      },
+      "startStep1": true,
+      "resumeSameStep": true,
+      "completed": true,
+      "guideSawComplete": true,
+      "replayStep1": true,
+      "keyboardStart": true,
+      "productRegression": [
+        {
+          "path": "index.html?demo=1",
+          "status": 200,
+          "selector": "#categoryGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "member.html?demo=1",
+          "status": 200,
+          "selector": "#caseGrid",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner-ipad.html?demo=1",
+          "status": 200,
+          "selector": "#gate",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "owner.html?demo=1",
+          "status": 200,
+          "selector": "#adminLoginForm",
+          "present": true,
+          "ok": true
+        },
+        {
+          "path": "system-check.html?demo=1",
+          "status": 200,
+          "selector": "#runButton",
+          "present": true,
+          "ok": true
+        }
+      ],
+      "unsafeWriteRequests": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "ok": true
+    }
+  ]
+}
