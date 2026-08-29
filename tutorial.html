@@ -99,7 +99,7 @@ iframe{display:block;width:100%;height:100%;border:0;background:#fff}
 <script>
 (() => {
   "use strict";
-  const VERSION = "GYOSEI-TUTORIAL-R3-V1.0-20260829";
+  const VERSION = "GYOSEI-TUTORIAL-R3-V1.1-20260829";
   const STORE_KEY = "dpro_tutorial_gyosei_v1";
   const CARD_POS_KEY = STORE_KEY + "_card";
   const ADMIN_SESSION_KEY = "dpro_gyosei_admin_code";
@@ -112,8 +112,8 @@ iframe{display:block;width:100%;height:100%;border:0;background:#fff}
     {id:"GYOSEI-03",title:"相談受付の流れを進める",path:"index.html?demo=1",primary:".step[data-step='1'] [data-next]",fallback:"#consultForm .step.active .btn-primary",copy:"5段階の相談受付を進めるボタンです。最終送信・予約登録はチュートリアル対象外です。"},
     {id:"GYOSEI-04",title:"依頼者マイページの状況を確認",path:"member.html?demo=1",primary:"#openCaseCount",fallback:".summary",copy:"進行中案件、必要書類、面談、期限を依頼者側から確認するサマリーです。"},
     {id:"GYOSEI-05",title:"進行中案件を見る",path:"member.html?demo=1",primary:"#caseGrid",fallback:".section .case-grid",copy:"案件カードと次の対応を確認する領域です。変更依頼などの業務操作は実行しません。"},
-    {id:"GYOSEI-06",title:"スタッフiPadへ入る",path:"owner-ipad.html?demo=1",primary:"#adminCode",fallback:"#loginForm",copy:"デモ管理コード 1234 を入力する場所です。コードはブラウザのセッションだけに保持されます。"},
-    {id:"GYOSEI-07",title:"iPad画面を開く",path:"owner-ipad.html?demo=1",primary:"#loginForm .btn-primary",fallback:"#adminCode",copy:"管理コード入力後にiPad画面を開きます。ログイン後の読込だけを確認し、書類・タスク・案件更新は行いません。"},
+    {id:"GYOSEI-06",title:"スタッフiPadへ入る",path:"owner-ipad.html?demo=1",primary:"#adminCode",fallback:"#loginForm",recovery:"nav.tabs",copy:"デモ管理コード 1234 を入力する場所です。デモ画面が自動認証済みの場合は、表示済みのタブ領域へ安全に復帰します。"},
+    {id:"GYOSEI-07",title:"iPad画面を開く",path:"owner-ipad.html?demo=1",primary:"#loginForm .btn-primary",fallback:"#adminCode",recovery:"nav.tabs",copy:"管理コード入力後にiPad画面を開きます。デモの自動認証が先に完了した場合はタブ領域へ復帰し、書類・タスク・案件更新は行いません。"},
     {id:"GYOSEI-08",title:"本日・検索・書類・タスクの入口を確認",path:"owner-ipad.html?demo=1",primary:"nav.tabs",fallback:"#gate",copy:"本日・顧客検索・書類受領・タスク・簡易更新の5つの入口を確認します。保存操作は行いません。"},
     {id:"GYOSEI-09",title:"管理PCを開く",path:"owner.html?demo=1",primary:"#pageTitle",fallback:"#adminCodeInput",copy:"管理PCのダッシュボードへ移動します。未ログインの場合は管理コード入力画面から復帰できます。"},
     {id:"GYOSEI-10",title:"期限・更新管理への導線を確認",path:"owner.html?demo=1",primary:"button.summary-card[data-jump='deadlines']",fallback:"#pageTitle",copy:"ダッシュボードの「未完了の期限」から期限・更新管理へ進む入口です。ここでFirst10は完了です。"}
@@ -298,13 +298,15 @@ iframe{display:block;width:100%;height:100%;border:0;background:#fff}
       installFrameHelpers(doc);
       const primary=doc.querySelector(step.primary);
       const fallback=doc.querySelector(step.fallback);
-      let target=null,used="primary";
+      const recovery=step.recovery ? doc.querySelector(step.recovery) : null;
+      let target=null,used="primary",matched=step.primary;
       if(visible(primary)) target=primary;
-      else if(visible(fallback)){target=fallback;used="fallback"}
+      else if(visible(fallback)){target=fallback;used="fallback";matched=step.fallback}
+      else if(visible(recovery)){target=recovery;used="recovery";matched=step.recovery}
       if(target){
-        lastResolution={stepId:step.id,used,selector:used==="primary"?step.primary:step.fallback};
+        lastResolution={stepId:step.id,used,selector:matched};
         highlight(target);
-        setResolveState(used==="primary" ? "対象を確認しました。黄色の枠が案内箇所です。" : "代替の安全な表示箇所を使用しています。",used!=="primary");
+        setResolveState(used==="primary" ? "対象を確認しました。黄色の枠が案内箇所です。" : used==="recovery" ? "デモの自動認証を確認し、安全な復帰先を案内しています。" : "代替の安全な表示箇所を使用しています。",used!=="primary");
         return;
       }
       if(tries<60) return setTimeout(attempt,250);
