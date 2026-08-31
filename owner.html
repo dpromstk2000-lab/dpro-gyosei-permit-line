@@ -855,6 +855,9 @@
     async function saveCaseStatuses(){
       const c=State.currentCase.case,changes=$$("[data-status-group]",$("#modalBody")).filter(s=>s.value!==s.dataset.original);
       if(!changes.length)return toast("状態は変更されていません。");
+      const guardedTargets=new Set(["accepted","declined","submitted","approved","rejected","withdrawn","completed","cancelled","renewed","expired"]);
+      const important=changes.filter(s=>guardedTargets.has(s.value));
+      if(important.length&&!confirm(`重要な案件状態を更新します。\n${important.map(s=>`${s.dataset.statusGroup} → ${s.value}`).join("\n")}\n実行しますか？`))return;
       showLoading(true,"状態を更新しています…");
       try{
         for(const s of changes)await DPRO_GYOSEI.apiFetch(`/api/admin/cases/${encodeURIComponent(c.id)}/status`,{method:"POST",admin:true,body:{status_group:s.dataset.statusGroup,new_status:s.value,customer_visible:$("#caseStatusCustomerVisible").checked,customer_message:val("caseStatusCustomerMessage"),internal_note:val("caseStatusInternalNote")}});
